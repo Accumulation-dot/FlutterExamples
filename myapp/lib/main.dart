@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/widget/random_words.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -9,20 +8,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      theme: ThemeData(
-        primaryColor: Colors.white,
-      ),
-      home: RandomWords());
-      // Scaffold(
-      //   appBar: AppBar(
-      //     title: Text('Welcome to Flutter'),
-      //   ),
-      //   body: Center(
-      //     child: RandomWords(),
-      //   ),
-      // )
-      //MyHomePage(title: 'Flutter Demo Home Page'),
+        title: 'Welcome to Flutter',
+        theme: ThemeData(
+          primaryColor: Colors.blue,
+        ),
+        home: RandomWords());
+    // Scaffold(
+    //   appBar: AppBar(
+    //     title: Text('Welcome to Flutter'),
+    //   ),
+    //   body: Center(
+    //     child: RandomWords(),
+    //   ),
+    // )
+    //MyHomePage(title: 'Flutter Demo Home Page'),
     // );
   }
 }
