@@ -30,6 +30,8 @@ dependencies:
   fluttertoast: ^3.1.3
   flutter_swiper: ^1.1.6
   cached_network_image: ^2.0.0-rc
+  jpush_flutter: 0.5.2
+
 
 dev_dependencies:
   flutter_test:
