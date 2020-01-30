@@ -55,6 +55,7 @@ class _RandomWordsState extends State<RandomWords>
 
   Widget _widgetForPair(WordPair pair) {
     final _faved = _fav.contains(pair);
+    _popValue('string');
     return ListTile(
       title: Text(pair.asPascalCase),
       trailing: Icon(
@@ -73,7 +74,11 @@ class _RandomWordsState extends State<RandomWords>
     );
   }
 
-  void _pushAction() {
+  _popValue(index) {
+    return index;
+  }
+
+  _pushAction() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
