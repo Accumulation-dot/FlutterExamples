@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/pages/category_list_page.dart';
+import 'package:myapp/pages/categories_page.dart';
 import 'package:myapp/pages/home_page.dart';
 
 final List<BottomNavigationBarItem> bottom = [
@@ -31,7 +31,7 @@ class TabBarPage extends StatefulWidget {
 class _TabBarPageState extends State<TabBarPage> {
   int currentIndex = 0;
 
-  List<Widget> pages = [HomePage(), CategoryListPage(), HomePage()];
+  List<Widget> pages = [HomePage(), CategoriesPage(), HomePage()];
 
   @override
   Widget build(BuildContext context) {

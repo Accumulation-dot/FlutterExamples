@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/pages/pages_global.dart';
-import 'package:myapp/pages/tab_page.dart';
+import 'package:myapp/pages/tab_bar_page.dart';
 
 void main() {
   runApp(new MyApp());

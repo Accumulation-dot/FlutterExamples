@@ -5,13 +5,12 @@ import 'package:myapp/pages/pages_global.dart';
 import 'package:myapp/widget/widget_global.dart';
 
 class HomePage extends StatefulWidget {
-
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
-  
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   final List<IconData> data = [];
 
   final List banner = [
@@ -103,7 +102,6 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
       }
     });
   }
-
 
   Widget gridViewItem(int index) {
     return new InkWell(

@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/models/categories_selection.dart';
 import 'package:myapp/models/category.dart';
 import 'package:myapp/pages/pages_global.dart';
 import 'package:myapp/widget/widget_global.dart';
 
-class CategoryListPage extends StatefulWidget {
+///
+class CategoriesPage extends StatefulWidget {
   @override
-  _CategoryListPageState createState() => _CategoryListPageState();
+  _CategoriesPageState createState() => _CategoriesPageState();
 }
 
 ///
-class _CategoryListPageState extends State<CategoryListPage> with AutomaticKeepAliveClientMixin {
+class _CategoriesPageState extends State<CategoriesPage>
+    with AutomaticKeepAliveClientMixin {
   ///
   final List<Category> data = List<Category>();
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   @override
@@ -46,7 +48,10 @@ class _CategoryListPageState extends State<CategoryListPage> with AutomaticKeepA
                 style: TextStyle(fontSize: 18, color: Colors.blueGrey),
               );
               return WidgetGlobal.categoryWidgetWith(text, tapCallback: () {
-                Navigator.of(context).pushNamed(PagesGlobal.category_detail, arguments: category);
+                Navigator.of(context).pushNamed(
+                    PagesGlobal.categories_detail,
+                    arguments: CategoriesSelection(
+                        categories: data, selectedIndex: index));
               });
             },
           ),
@@ -66,8 +71,10 @@ class _CategoryListPageState extends State<CategoryListPage> with AutomaticKeepA
       borderRadius: BorderRadius.circular(4),
       child: InkWell(
         onTap: () {
-          Navigator.of(context)
-              .pushNamed(PagesGlobal.category_detail, arguments: category);
+          Navigator.of(context).pushNamed(
+            PagesGlobal.category_detail,
+            arguments: category,
+          );
         },
         child: Container(
           color: Colors.green,
@@ -87,6 +94,16 @@ class _CategoryListPageState extends State<CategoryListPage> with AutomaticKeepA
         setState(() {
           data.clear();
           [
+            Category(1, "机器人"),
+            Category(2, "手办"),
+            Category(3, "微颗粒"),
+            Category(4, "益智玩具"),
+            Category(5, "少儿玩具"),
+            Category(1, "机器人"),
+            Category(2, "手办"),
+            Category(3, "微颗粒"),
+            Category(4, "益智玩具"),
+            Category(5, "少儿玩具"),
             Category(1, "机器人"),
             Category(2, "手办"),
             Category(3, "微颗粒"),

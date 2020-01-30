@@ -12,7 +12,6 @@ class CategoryDetailPage extends StatefulWidget {
 }
 
 class _CategoryDetailPageState extends State<CategoryDetailPage> {
-
   @override
   void initState() {
     super.initState();
@@ -20,14 +19,17 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.category.title),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text(widget.category.title),
-      ),
+    return Center(
+      child: Text(widget.category.title),
     );
+    // Scaffold(
+    //   appBar: AppBar(
+    //     title: Text(widget.category.title),
+    //     centerTitle: true,
+    //   ),
+    //   body: Center(
+    //     child: Text(widget.category.title),
+    //   ),
+    // );
   }
 }
