@@ -58,10 +58,17 @@ class _HomePageState extends State<HomePage>
               shrinkWrap: true,
               itemCount: data.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("$index"),
-                  leading: Icon(data[index]),
-                );
+                
+                return WidgetGlobal.addressWidget('标题', address: "address is ", fav: true, count: 100, tapCallback: () {
+                  setState(() {
+                    
+                  });
+                });
+                
+                // ListTile(
+                //   title: Text("$index"),
+                //   leading: Icon(data[index]),
+                // );
               },
               separatorBuilder: (context, index) => Divider(),
               physics: NeverScrollableScrollPhysics(),

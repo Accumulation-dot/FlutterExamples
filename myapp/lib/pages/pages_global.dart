@@ -3,6 +3,7 @@ import 'package:myapp/pages/categories_detail_page.dart';
 import 'package:myapp/pages/categories_page.dart';
 import 'package:myapp/pages/category_detail_page.dart';
 import 'package:myapp/pages/commodities_page.dart';
+import 'package:myapp/pages/commodity_detail_page.dart';
 import 'package:myapp/pages/tab_bar_page.dart';
 import 'package:myapp/pages/welcome_page.dart';
 
@@ -10,7 +11,7 @@ import 'package:myapp/pages/welcome_page.dart';
 class PagesGlobal {
   static const String tab = '/tab';
 
-  static const String home = '/home';
+  static const String welcome = '/welcome';
 
   static const String about = '/about';
 
@@ -22,7 +23,7 @@ class PagesGlobal {
 
   static const String commodities = '/commodities';
 
-  static const String welcome = '/welcome';
+  static const String commodity = '/commodity';
 
   static routes() {
     return {
@@ -39,6 +40,7 @@ class PagesGlobal {
           CategoriesDetailPage(
             categoriesSelection: arguments,
           ),
+      PagesGlobal.commodity: (BuildContext context, {arguments}) => CommodityDetailPage(commodity: arguments,)
     };
   }
 }

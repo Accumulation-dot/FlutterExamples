@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/models/commodity.dart';
 
 class CommodityDetailPage extends StatefulWidget {
+  final Commodity commodity;
+
+  const CommodityDetailPage({Key key, this.commodity}) : super(key: key);
+
   @override
   _CommodityDetailPageState createState() => _CommodityDetailPageState();
 }
@@ -8,8 +13,14 @@ class CommodityDetailPage extends StatefulWidget {
 class _CommodityDetailPageState extends State<CommodityDetailPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('商品详情'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Icon(widget.commodity.iconData),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Text(widget.commodity.title),
+      ),
     );
   }
 }

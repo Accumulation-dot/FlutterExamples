@@ -33,6 +33,7 @@ class _CategoriesDetailPageState extends State<CategoriesDetailPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('商品信息'),
+        centerTitle: true,
         bottom: TabBar(
             isScrollable: true,
             controller: _tabController,

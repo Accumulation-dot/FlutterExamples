@@ -1,5 +1,9 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+
+final GestureTapCallback callback = (){};
 
 /// 创建所有的Widget
 ///
@@ -68,6 +72,56 @@ class WidgetGlobal {
     return Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.lightBlueAccent),
+      ),
+    );
+  }
+
+  static popupSelectItem(IconData iconData, String title, String identifier) {
+    return PopupMenuItem<String>(
+      value: identifier,
+      child: ListTile(
+        leading: Icon(iconData),
+        title: Text(
+          title,
+          textAlign: TextAlign.justify,
+        ),
+      ),
+    );
+  }
+
+  static addressWidget({String title = '', String address = '', bool fav = false, int count = 0, GestureTapCallback tapCallback}) {
+    GestureTapCallback callback = tapCallback;
+    if (tapCallback == null) {
+      callback = (){};
+    }
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    title,
+                    style: TextStyle(fontWeight: FontWeight.bold,),
+                  ),
+                ),
+                Text(
+                  address,
+                  style: TextStyle(color: Colors.grey[500]),
+                )
+              ],
+            ),
+          ),
+          InkWell(
+            child: Icon(Icons.star, color: fav ? Colors.red : Colors.grey,),
+            onTap: callback,
+          ),
+          Text('$count'),
+        ],
       ),
     );
   }

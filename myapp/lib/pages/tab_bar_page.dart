@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/pages/categories_page.dart';
 import 'package:myapp/pages/home_page.dart';
+import 'package:myapp/widget/widget_global.dart';
 
 final List<BottomNavigationBarItem> bottom = [
   BottomNavigationBarItem(
@@ -39,6 +40,30 @@ class _TabBarPageState extends State<TabBarPage> {
       appBar: AppBar(
         title: bottom[currentIndex].title,
         centerTitle: true,
+        actions: <Widget>[
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+              PopupMenuItem(
+                value: 1,
+                child: ListTile(
+                  leading: Icon(Icons.scanner),
+                  title: Text('扫一扫'),
+                ),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 2,
+                child: ListTile(
+                  leading: Icon(Icons.scanner),
+                  title: Text('扫一扫'),
+                ),
+              )
+            ],
+            onSelected: (int index) {
+              print(index);
+            },
+          )
+        ],
       ),
       body: IndexedStack(
         index: currentIndex,
