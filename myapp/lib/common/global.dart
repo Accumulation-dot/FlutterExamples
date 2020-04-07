@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:myapp/models/cache_config.dart';
 import 'package:myapp/models/profile.dart';
 import 'package:myapp/service/net_cache.dart';
@@ -50,4 +51,12 @@ class Global {
   }
 
   static saveProfile() => preferences.setString(Global.profileKey, jsonEncode(profile.toJson()));
+}
+
+class ValidationGlobal {
+
+  static final WhitelistingTextInputFormatter alphabet = WhitelistingTextInputFormatter(RegExp(r'[A-Za-z]'));
+
+  static final WhitelistingTextInputFormatter alphabetWithDigits = WhitelistingTextInputFormatter(RegExp(r'[A-Za-z\d]'));
+
 }

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       home: new Scaffold(
         body: TabBarPage(),
       ),
-      initialRoute: PagesGlobal.welcome,
+      initialRoute: PagesGlobal.animated_icon,
     );
   }
 }

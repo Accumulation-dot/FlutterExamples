@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/pages/categories_page.dart';
 import 'package:myapp/pages/home_page.dart';
-import 'package:myapp/widget/widget_global.dart';
+import 'package:myapp/pages/pages_global.dart';
 
 final List<BottomNavigationBarItem> bottom = [
   BottomNavigationBarItem(
@@ -40,6 +40,12 @@ class _TabBarPageState extends State<TabBarPage> {
       appBar: AppBar(
         title: bottom[currentIndex].title,
         centerTitle: true,
+        leading: InkWell(
+          child: Icon(Icons.home),
+          onTap: () {
+            Navigator.of(context).pushNamed(PagesGlobal.login);
+          },
+        ),
         actions: <Widget>[
           PopupMenuButton(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[

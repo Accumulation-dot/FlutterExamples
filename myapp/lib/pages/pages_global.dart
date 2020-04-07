@@ -4,8 +4,10 @@ import 'package:myapp/pages/categories_page.dart';
 import 'package:myapp/pages/category_detail_page.dart';
 import 'package:myapp/pages/commodities_page.dart';
 import 'package:myapp/pages/commodity_detail_page.dart';
+import 'package:myapp/pages/login_page.dart';
 import 'package:myapp/pages/tab_bar_page.dart';
 import 'package:myapp/pages/welcome_page.dart';
+import 'package:myapp/provider/animated_icon_widget.dart';
 
 ///
 class PagesGlobal {
@@ -25,22 +27,35 @@ class PagesGlobal {
 
   static const String commodity = '/commodity';
 
+  static const String login = '/login';
+
+  static const String loader_test = '/loader_test';
+
+  static const String animated_icon = 'animated_icon';
+
   static routes() {
     return {
-      PagesGlobal.tab: (BuildContext context) => TabBarPage(),
-      PagesGlobal.commodities: (BuildContext context, {arguments}) =>
-          CommoditiesPage(),
-      PagesGlobal.categories: (BuildContext context) => CategoriesPage(),
-      PagesGlobal.category_detail: (BuildContext context, {arguments}) =>
+      tab: (BuildContext context) => TabBarPage(),
+      commodities: (BuildContext context, {arguments}) => CommoditiesPage(),
+      categories: (BuildContext context) => CategoriesPage(),
+      category_detail: (BuildContext context, {arguments}) =>
           CategoryDetailPage(
             category: arguments,
           ),
-      PagesGlobal.welcome: (BuildContext context) => WelcomePage(),
-      PagesGlobal.categories_detail: (BuildContext context, {arguments}) =>
+      welcome: (BuildContext context) => WelcomePage(),
+      categories_detail: (BuildContext context, {arguments}) =>
           CategoriesDetailPage(
             categoriesSelection: arguments,
           ),
-      PagesGlobal.commodity: (BuildContext context, {arguments}) => CommodityDetailPage(commodity: arguments,)
+      commodity: (BuildContext context, {arguments}) => CommodityDetailPage(
+            commodity: arguments,
+          ),
+      login: (BuildContext context) => LoginPage(),
+      animated_icon: (BuildContext context) => AnimatedIconsWidget(),
+
+      // PagesGlobal.loader_test: (BuildContext context,) {
+      //   return Mult
+      // }
     };
   }
 }

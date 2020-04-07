@@ -1,9 +1,7 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-
-final GestureTapCallback callback = (){};
+final GestureTapCallback callback = () {};
 
 /// 创建所有的Widget
 ///
@@ -89,10 +87,15 @@ class WidgetGlobal {
     );
   }
 
-  static addressWidget({String title = '', String address = '', bool fav = false, int count = 0, GestureTapCallback tapCallback}) {
+  static addressWidget(String s,
+      {String title = '',
+      String address = '',
+      bool fav = false,
+      int count = 0,
+      GestureTapCallback tapCallback}) {
     GestureTapCallback callback = tapCallback;
     if (tapCallback == null) {
-      callback = (){};
+      callback = () {};
     }
     return Container(
       padding: const EdgeInsets.all(10),
@@ -106,7 +109,9 @@ class WidgetGlobal {
                   padding: const EdgeInsets.all(8),
                   child: Text(
                     title,
-                    style: TextStyle(fontWeight: FontWeight.bold,),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Text(
@@ -117,10 +122,70 @@ class WidgetGlobal {
             ),
           ),
           InkWell(
-            child: Icon(Icons.star, color: fav ? Colors.red : Colors.grey,),
+            child: Icon(
+              Icons.star,
+              color: fav ? Colors.red : Colors.grey,
+            ),
             onTap: callback,
           ),
           Text('$count'),
+        ],
+      ),
+    );
+  }
+
+  static Widget homeAddressWidget() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: 50.0,
+            height: 50.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(width: 1, color: Colors.grey)),
+            child: Icon(Icons.home),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[],
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    """this is a title showed, but it's just a test, you can't see the world""",
+                    softWrap: false,
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.fade,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  child: Text(
+                    'address',
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          InkWell(
+            child: Icon(
+              Icons.star,
+              color: Colors.grey,
+            ),
+            onTap: callback,
+          ),
+          Text('10'),
         ],
       ),
     );
