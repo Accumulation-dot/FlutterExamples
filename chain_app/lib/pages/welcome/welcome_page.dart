@@ -52,6 +52,7 @@ class _WelcomePageState extends State<WelcomePage> with WidgetsBindingObserver {
   _navigator() async {
 //    Navigator.of(context).pushReplacementNamed(Routes.)
     var token = Global.token;
+    print(token);
     if (token != null && token.isNotEmpty) {
       Navigator.of(context).pushReplacementNamed(Routes.tab);
     } else {

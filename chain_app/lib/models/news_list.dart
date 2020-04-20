@@ -1,9 +1,11 @@
-import 'package:json_annotation/json_annotation.dart';
-
+import 'package:json_annotation/json_annotation.dart'; 
+  
 part 'news_list.g.dart';
 
+
 @JsonSerializable()
-class NewsList extends Object {
+  class NewsList extends Object {
+
   @JsonKey(name: 'count')
   int count;
 
@@ -11,47 +13,41 @@ class NewsList extends Object {
   String next;
 
   @JsonKey(name: 'list')
-  List<NewsItem> list;
+  List<News> list;
 
-  NewsList(
-    this.count,
-    this.next,
-    this.list,
-  );
+  NewsList(this.count,this.next,this.list,);
 
-  factory NewsList.fromJson(Map<String, dynamic> srcJson) =>
-      _$NewsListFromJson(srcJson);
+  factory NewsList.fromJson(Map<String, dynamic> srcJson) => _$NewsListFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NewsListToJson(this);
+
 }
 
+  
 @JsonSerializable()
-class NewsItem extends Object {
-  @JsonKey(name: 'id')
-  int id;
+  class News extends Object {
 
-  @JsonKey(name: 'title')
-  String title;
+  @JsonKey(name: 'id')
+  String id;
 
   @JsonKey(name: 'img')
   String img;
 
+  @JsonKey(name: 'title')
+  String title;
+
   @JsonKey(name: 'url')
   String url;
 
-  @JsonKey(name: 'datetime')
-  String datetime;
+  @JsonKey(name: 'date')
+  String date;
 
-  NewsItem(
-    this.id,
-    this.title,
-    this.img,
-    this.url,
-    this.datetime,
-  );
+  News(this.id,this.img,this.title,this.url,this.date,);
 
-  factory NewsItem.fromJson(Map<String, dynamic> srcJson) =>
-      _$NewsItemFromJson(srcJson);
+  factory News.fromJson(Map<String, dynamic> srcJson) => _$NewsFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$NewsItemToJson(this);
+  Map<String, dynamic> toJson() => _$NewsToJson(this);
+
 }
+
+  

@@ -19,12 +19,16 @@ class UserInfo extends Object {
   @JsonKey(name: 'token')
   String token;
 
+  @JsonKey(name: 'code')
+  String code;
+
   UserInfo(
     this.coin,
     this.created,
     this.frozen,
     this.address,
     this.token,
+      this.code,
   );
 
   factory UserInfo.fromJson(Map<String, dynamic> srcJson) =>

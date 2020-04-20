@@ -1,4 +1,5 @@
 import 'package:chain_app/models/news_list.dart';
+import 'package:chain_app/pages/information/news_detail_page.dart';
 import 'package:chain_app/pages/information/widgets/info_widget.dart';
 import 'package:chain_app/tools/routes.dart';
 import 'package:chain_app/tools/webservices.dart';
@@ -16,7 +17,7 @@ class _NewsPageState extends State<NewsPage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: InfiniteListView<NewsItem>(
+      body: InfiniteListView<News>(
         initState: LoadingState(),
         loadingBuilder: (context) {
           return InfoWidget.loadingWidget();
@@ -26,21 +27,22 @@ class _NewsPageState extends State<NewsPage>
         },
         onRetrieveData: (page, items, refresh) {
           return WebServices.newsList(p: page).then((value) {
+            print(value);
             if (refresh) {
               items.clear();
             }
             final news = NewsList.fromJson(value.data);
             items.addAll(news.list);
-            return news.next.length != 0;
+            return int.parse(news.next) != 0;
           }).catchError((e) {
             print(e);
           });
         },
         itemBuilder: (list, index, context) {
-          NewsItem item = list[index];
+          News item = list[index];
           return InfoWidget.newsItemWidget(
             leading: InfoWidget.cachedImageWidget(
-              imageUrl: item.url,
+              imageUrl: item.img,
               size: Size(50, 50),
             ),
             title: Container(
@@ -48,13 +50,23 @@ class _NewsPageState extends State<NewsPage>
                 top: 10,
                 left: 10,
               ),
-              child: Text('${item.title}'),
+              child: Text(
+                '${item.title}',
+              ),
             ),
             onTap: () {
-              Navigator.of(context).pushNamed(Routes.login);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return NewsDetailPage(
+                      item: item,
+                    );
+                  },
+                ),
+              );
             },
             subtitle: InfoWidget.newsSubtitleWidget(
-              datetime: item.datetime,
+              datetime: item.date,
             ),
           );
         },

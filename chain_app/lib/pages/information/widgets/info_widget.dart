@@ -22,6 +22,8 @@ class InfoWidget {
       height: size.height,
       width: size.width,
       child: CachedNetworkImage(
+        width: size.width,
+        height: size.height,
         imageUrl: imageUrl,
         placeholder: placeholder ??
             (context, index) {
@@ -95,17 +97,16 @@ class InfoWidget {
       Widget subtitle,
       Widget trailing,
       VoidCallback onTap}) {
-    return SizedBox(
-      height: 90,
-      child: Card(
+    return  Card(
         child: ListTile(
           leading: leading,
           title: title,
           subtitle: subtitle,
           trailing: trailing,
+          isThreeLine: true,
           onTap: onTap,
         ),
-      ),
+//      ),
     );
   }
 

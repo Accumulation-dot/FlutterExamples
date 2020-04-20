@@ -11,8 +11,8 @@ NewsList _$NewsListFromJson(Map<String, dynamic> json) {
     json['count'] as int,
     json['next'] as String,
     (json['list'] as List)
-        ?.map((e) =>
-            e == null ? null : NewsItem.fromJson(e as Map<String, dynamic>))
+        ?.map(
+            (e) => e == null ? null : News.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   );
 }
@@ -23,20 +23,20 @@ Map<String, dynamic> _$NewsListToJson(NewsList instance) => <String, dynamic>{
       'list': instance.list,
     };
 
-NewsItem _$NewsItemFromJson(Map<String, dynamic> json) {
-  return NewsItem(
-    json['id'] as int,
-    json['title'] as String,
+News _$NewsFromJson(Map<String, dynamic> json) {
+  return News(
+    json['id'] as String,
     json['img'] as String,
+    json['title'] as String,
     json['url'] as String,
-    json['datetime'] as String,
+    json['date'] as String,
   );
 }
 
-Map<String, dynamic> _$NewsItemToJson(NewsItem instance) => <String, dynamic>{
+Map<String, dynamic> _$NewsToJson(News instance) => <String, dynamic>{
       'id': instance.id,
-      'title': instance.title,
       'img': instance.img,
+      'title': instance.title,
       'url': instance.url,
-      'datetime': instance.datetime,
+      'date': instance.date,
     };

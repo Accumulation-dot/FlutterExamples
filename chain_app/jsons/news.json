@@ -1,24 +1,12 @@
+{"count": 1,
+"next": "0",
+"list": [
 {
-  "count": 3,
-  "next": "",
-  "list": [
-    {
-      "id": 1,
-      "title": "标题",
-      "img": "https://www.baidu.com",
-      "url": "httpsL//www.baidu.com"
-    },
-    {
-      "id": 2,
-      "title": "标题",
-      "img": "https://www.baidu.com",
-      "url": "https://www.baidu.com"
-    },
-    {
-      "id": 3,
-      "title": "标题",
-      "img": "https://www.baidu.com",
-      "url": "https://www.baidu.com"
-    }
-  ]
+"id": "1f4d1b3a-65c4-5dc1-b7fb-57be1184cc2e",
+"img": "http://127.0.0.1:8000/news/news/Screen_Shot_2020-04-05_at_21.34.47.png",
+"title": "测试新闻2",
+"url": "https://news.sina.com.cn/w/2020-04-09/doc-iircuyvh6744764.shtml",
+"date": "2020-04-09"
+}
+]
 }

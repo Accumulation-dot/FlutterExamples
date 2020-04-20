@@ -26,9 +26,9 @@ part 'pay_list.g.dart';
   
 @JsonSerializable()
   class Pay extends Object {
-
-  @JsonKey(name: 'id')
-  int id;
+//
+//  @JsonKey(name: 'id')
+//  int id;
 
   @JsonKey(name: 'type_desc')
   String typeDesc;
@@ -42,7 +42,13 @@ part 'pay_list.g.dart';
   @JsonKey(name: 'number')
   String number;
 
-  Pay(this.id,this.typeDesc,this.type,this.name,this.number,);
+  @JsonKey(name: 'user')
+  String user;
+
+  @JsonKey(name: 'use')
+  bool use;
+
+  Pay(this.typeDesc,this.type,this.name,this.number,this.user, this.use);
 
   factory Pay.fromJson(Map<String, dynamic> srcJson) => _$PayFromJson(srcJson);
 

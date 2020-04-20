@@ -35,4 +35,32 @@ class Routes {
   static const pay = '/pay';
 
   static const pay_detail = '/pay_detial';
+
+  static const machine_mine = '/machine_mine';
+
+  static const task_record = '/task_record';
+
+
+  static const daily_task = '/daily_task';
+
+  static const personal_info = '/personal_info';
+
+  static const setting = '/setting';
+
+  static const coins_record = '/coins_record';
+
+
+  static const sell_mine = '/sell_mine';
+
+  static const buy_mine = '/buy_mine';
+
+  static const sell_order = '/sell_order';
+
+  static const buy_order = '/buy_order';
+
+  static const add_trade = '/add_trade';
+
+  static const deal = '/deal';
+
+  static const inviter = '/inviter';
 }

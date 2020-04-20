@@ -1,0 +1,52 @@
+{
+  "count": 3,
+  "next": "0",
+  "list": [
+    {
+      "user": "4717874e-72c3-56a1-83f6-f449322c464d1586066965",
+      "created": "2020-04-05 14:09:50",
+      "sell": {
+        "user": "developer2",
+        "status_desc": "已付款",
+        "created": "2020-04-05 14:06:03",
+        "pays": [
+          {
+            "type_desc": "支付宝",
+            "type": "ALI",
+            "name": "银行卡1",
+            "number": "987654321099812",
+            "use": true
+          },
+          {
+            "type_desc": "支付宝",
+            "type": "ALI",
+            "name": "银行卡1",
+            "number": "987654321099812",
+            "use": true
+          },
+          {
+            "type_desc": "支付宝",
+            "type": "ALI",
+            "name": "银行卡1",
+            "number": "987654321099812",
+            "use": true
+          },
+          {
+            "type_desc": "银行卡",
+            "type": "BANK",
+            "name": "银行卡",
+            "number": "12314141241231231241241",
+            "use": true
+          }
+        ],
+        "number": 5.0,
+        "status": 2,
+        "serial_no": "20200405140603-1586066763-1-yMVulQd0O6",
+        "price": 100.0
+      },
+      "status_desc": "已付款",
+      "status": 1,
+      "serial_no": "20200405140950-1586066990-3-GZSBzo8gJc"
+    }
+  ]
+}

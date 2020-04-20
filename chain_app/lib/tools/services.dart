@@ -3,8 +3,23 @@ import 'dart:io';
 import 'package:chain_app/tools/global.dart';
 import 'package:dio/dio.dart';
 
+final username = "username";
+
+final password = "password";
+
+final page = 'page';
+
+final size = 'size';
+
+final status = 'status';
+
+final number = 'number';
+
+final price = 'price';
+
 class NServices {
-  static const baseUrl = 'http://192.168.1.106:8000/';
+   static const baseUrl = 'http://192.168.1.106:8000/';
+//  static const baseUrl = 'http://30c5s39046.qicp.vip:8000/';
 
   static const token = 'access_token';
 
@@ -55,6 +70,14 @@ class NServices {
         cancelToken: CancelToken(),
       );
     }
+  }
+
+  static Future<Response<T>> formRequest<T>(String uri, FormData parameters) {
+    return dio.post<T>(
+      uri,
+      data: parameters,
+      cancelToken: CancelToken(),
+    );
   }
 
   static String urls(

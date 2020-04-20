@@ -24,18 +24,20 @@ Map<String, dynamic> _$PayListToJson(PayList instance) => <String, dynamic>{
 
 Pay _$PayFromJson(Map<String, dynamic> json) {
   return Pay(
-    json['id'] as int,
     json['type_desc'] as String,
     json['type'] as String,
     json['name'] as String,
     json['number'] as String,
+    json['user'] as String,
+    json['use'] as bool,
   );
 }
 
 Map<String, dynamic> _$PayToJson(Pay instance) => <String, dynamic>{
-      'id': instance.id,
       'type_desc': instance.typeDesc,
       'type': instance.type,
       'name': instance.name,
       'number': instance.number,
+      'user': instance.user,
+      'use': instance.use,
     };

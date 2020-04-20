@@ -13,6 +13,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) {
     (json['frozen'] as num)?.toDouble(),
     json['address'] as String,
     json['token'] as String,
+    json['code'] as String,
   );
 }
 
@@ -22,4 +23,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
       'frozen': instance.frozen,
       'address': instance.address,
       'token': instance.token,
+      'code': instance.code,
     };

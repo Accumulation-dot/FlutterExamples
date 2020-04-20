@@ -66,9 +66,10 @@ void aboutAlertDialog(BuildContext context) {
 }
 
 void alertDialog(BuildContext context,
-    {String title = '提示', String content = '你需要补充内容', List<Widget> actions}) {
+    {String title = '提示', String content = '你需要补充内容', List<Widget> actions, bool barrierDismissible = false}) {
   showDialog(
     context: context,
+    barrierDismissible: barrierDismissible,
     builder: (context) {
       return AlertDialog(
         title: Center(
