@@ -5,7 +5,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class Tools {
-  static const randomLength = 6;
+  static const randomLength = 4;
 
   static const _alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
