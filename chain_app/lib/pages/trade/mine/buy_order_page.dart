@@ -1,11 +1,13 @@
 import 'package:chain_app/models/buy_list.dart';
 import 'package:chain_app/models/buy_order_list.dart';
 import 'package:chain_app/pages/trade/mine/buy_order_detail_page.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/style/w_style.dart';
+import 'package:chain_app/tools/alert_dialog.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
 import 'package:chain_app/widgets/widget_global.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
-//import '';
 
 class BuyOrderPage extends StatefulWidget {
   @override
@@ -40,7 +42,7 @@ class _BuyOrderPageState extends State<BuyOrderPage>
             text: '待付款',
           ),
           Tab(
-            text: '已付款',
+            text: '待放币',
           ),
           Tab(
             text: '已完成',
@@ -57,20 +59,19 @@ class _BuyOrderPageState extends State<BuyOrderPage>
   bodyChildren() {
     int size = 10;
     return [0, 1, 2].asMap().keys.map((e) {
-//      return Center(child: Text('${e}'),);
       return InfiniteListView<BuyOrder>(
           pageSize: size,
           onRetrieveData: (page, items, refresh) {
-            return TradeService.buyOrdered(e, p: page, s: size)
-                .then((value) {
+            return TradeService.buyOrdered(e, p: page, s: size).then((value) {
               if (refresh) {
                 items.clear();
               }
               BuyOrderList buyOrderList = BuyOrderList.fromJson(value.data);
-
               items.addAll(buyOrderList.list);
               return int.parse(buyOrderList.next) != 0;
-            }).catchError((e) {});
+            }).catchError((error) {
+              SManager.dioErrorHandle(context, error);
+            });
           },
           itemBuilder: (items, index, context) {
             BuyOrder item = items[index];
@@ -81,23 +82,28 @@ class _BuyOrderPageState extends State<BuyOrderPage>
                   price: item.buy.price,
                 ),
                 subtitle: Text(item.created),
-                trailing: RaisedButton(
-                  color: Colors.orange,
-                  child: Text(
-                    '查看',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  shape: WidgetStyle.roundedBorder(circular: 20),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) {
-                        return BuyOrderDetailPage(
-                          order: item,
-                        );
-                      }),
-                    );
-                  },
-                ),
+                trailing: e == 2
+                    ? Text(
+                        '完成',
+                        style: TextStyle(color: Colors.green),
+                      )
+                    : RaisedButton(
+                        color: Colors.orange,
+                        child: Text(
+                          '查看',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        shape: WStyle.roundedBorder20,
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) {
+                              return BuyOrderDetailPage(
+                                order: item,
+                              );
+                            }),
+                          );
+                        },
+                      ),
               ),
             );
           });

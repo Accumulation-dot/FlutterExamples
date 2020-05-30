@@ -1,9 +1,9 @@
 import 'package:chain_app/models/task_record_list.dart';
-import 'package:chain_app/tools/alert_dialog.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/webservices.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/news_services.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class DailyTaskPage extends StatefulWidget {
   @override
@@ -65,12 +65,10 @@ class _DailyTaskPageState extends State<DailyTaskPage> {
                   style: TextStyle(color: Colors.white),
                 ),
           color: completed ? Colors.grey : Colors.orange,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: WStyle.roundedBorder20,
           onPressed: () {
             if (completed) {
-              Fluttertoast.showToast(msg: '当日任务已完成', timeInSecForIos: 1);
+              SManager.showMessage('当日任务已完成');
               return;
             }
             Navigator.of(context).popUntil(ModalRoute.withName(Routes.tab));
@@ -81,7 +79,7 @@ class _DailyTaskPageState extends State<DailyTaskPage> {
   }
 
   _request() async {
-    return WebServices.taskCheck().then((value) {
+    return NewsServices.taskCheck().then((value) {
       this.record = TaskRecord.fromJson(value.data);
       if (value.statusCode == 200) {
         completed = false;
@@ -89,9 +87,8 @@ class _DailyTaskPageState extends State<DailyTaskPage> {
         completed = true;
       }
       setState(() {});
-    }).catchError((e) {
-      alertDialog(context, content: e.toString());
-      Navigator.of(context).popUntil(ModalRoute.withName(Routes.tab));
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
     });
   }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:chain_app/tools/global.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/services.dart';
+import 'package:chain_app/tools/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,17 +33,10 @@ class _WelcomePageState extends State<WelcomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: InkWell(
+      body: Container(
+        color: Colors.white,
         child: Center(
-          child: Text(
-            '欢迎',
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 30,
-            ),
-          ),
+          child: Image.asset('images/start1.jpeg', fit: BoxFit.fill,),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:chain_app/models/coin_record_list.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
+import 'package:chain_app/tools/s_manager.dart';
 import 'package:chain_app/tools/webservices.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,8 @@ class _CoinRecordPageState extends State<CoinRecordPage> {
           }
           CoinRecordList coinRecordList = CoinRecordList.fromJson(value.data);
           items.addAll(coinRecordList.list);
-        }).catchError((e) {
-          alertDialog(context, content: e.toString());
+        }).catchError((error) {
+          SManager.dioErrorHandle(context, error);
         });
       }, itemBuilder: (items, index, context) {
         CoinRecord coinRecord = items[index];

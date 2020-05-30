@@ -2,7 +2,9 @@ import 'package:chain_app/pages/information/info_page.dart';
 import 'package:chain_app/pages/machine/machine_page.dart';
 import 'package:chain_app/pages/trade/trade_page.dart';
 import 'package:chain_app/pages/user/user_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 
 @immutable
 class TabPage extends StatefulWidget {
@@ -13,58 +15,10 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   int _index = 0;
 
-  List<Widget> body = [InfoPage(), TradePage(), MachinePage(), UserPage()];
-
-  List<BottomNavigationBarItem> bottom = [
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home),
-      title: Text('资讯'),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.shop),
-      title: Text('ECO交易区'),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.attach_money),
-      title: Text('节点'),
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.account_circle),
-      title: Text('我的'),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _body(),
-      bottomNavigationBar: _bottom(),
-    );
-
-//    return Scaffold(
-//      body: _getBody(body),
-//      bottomNavigationBar: _getBottom(bottom),
-//    );
-  }
-
-  _getBottom(List<BottomNavigationBarItem> items) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      items: items,
-      currentIndex: _index,
-      onTap: (index) {
-        setState(() {
-          _index = index;
-        });
-      },
-    );
-  }
-
-  _getBody(List<Widget> children) {
-    return IndexedStack(
-      index: _index,
-      children: children,
-    );
+    return ProgressHUD(
+        child: Scaffold(body: _body(), bottomNavigationBar: _bottom()));
   }
 
   _bottom() {
@@ -77,12 +31,14 @@ class _TabPageState extends State<TabPage> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.shop),
-          title: Text('ECO交易区'),
+          title: Text('SD交易区'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.attach_money),
-          title: Text('节点'),
+          title: Text('SD节点'),
         ),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart), title: Text('SD商城')),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
           title: Text('我的'),
@@ -90,15 +46,31 @@ class _TabPageState extends State<TabPage> {
       ],
       onTap: (index) {
         _index = index;
-        setState(() {
-
-        });
+        setState(() {});
       },
       type: BottomNavigationBarType.fixed,
     );
   }
 
   _body() {
-    return body[_index];
+    switch (_index) {
+      case 0:
+        return InfoPage();
+        break;
+      case 1:
+        return TradePage();
+        break;
+      case 2:
+        return MachinePage();
+        break;
+      case 3:
+        return Center(
+          child: Text('等待开发'),
+        );
+        break;
+      case 4:
+        return UserPage();
+        break;
+    }
   }
 }

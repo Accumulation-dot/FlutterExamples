@@ -20,24 +20,24 @@ class _DealPageState extends State<DealPage> {
         children: [
           UAction(
               iconData: Icons.file_upload,
-              title: '我的出售信息',
+              title: '挂单出售信息',
               actionType: ActionType.sell_mine,
               route: Routes.sell_mine),
           UAction(
             iconData: Icons.file_download,
-            title: '我的求购信息',
+            title: '挂单求购信息',
             actionType: ActionType.buy_mine,
             route: Routes.buy_mine,
           ),
           UAction(
             iconData: Icons.add_to_photos,
-            title: '我的订购: 出售',
+            title: '吃单出售信息',
             actionType: ActionType.sell_order,
             route: Routes.sell_order,
           ),
           UAction(
             iconData: Icons.lock_outline,
-            title: '我的订购: 求购',
+            title: '吃单求购信息',
             actionType: ActionType.buy_order,
             route: Routes.buy_order,
           )

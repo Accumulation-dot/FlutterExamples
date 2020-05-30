@@ -1,7 +1,10 @@
 import 'package:chain_app/models/advert_list.dart';
 import 'package:chain_app/pages/information/widgets/info_widget.dart';
+import 'package:chain_app/tools/global.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/services.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/app_config.dart';
+import 'package:chain_app/tools/tools.dart';
 import 'package:chain_app/tools/webservices.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +19,11 @@ class AdvertPage extends StatefulWidget {
   _AdvertPageState createState() => _AdvertPageState();
 }
 
-class _AdvertPageState extends State<AdvertPage>
-    with AutomaticKeepAliveClientMixin {
-  ///
-  final List<String> data = [];
+class _AdvertPageState extends State<AdvertPage> {
+
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       appBar: widget.needNav
           ? AppBar(
@@ -32,18 +32,16 @@ class _AdvertPageState extends State<AdvertPage>
           : null,
       body: InfiniteListView<AdvertItem>(
         onRetrieveData: (page, items, refresh) async {
-          return WebServices.advertList(
-            p: page,
-          ).then((value) {
+          return WebServices.advertList(p: page).then((value) {
             print(value);
             if (refresh) {
               items.clear();
             }
             final advertList = AdvertList.fromJson(value.data);
             items.addAll(advertList.list);
-            return advertList.next.length != 0;
-          }).catchError((e) {
-            print(e);
+            return int.parse(advertList.next) != 0;
+          }).catchError((error) {
+            SManager.dioErrorHandle(context, error);
           });
         },
         itemBuilder: (list, index, context) {
@@ -55,19 +53,23 @@ class _AdvertPageState extends State<AdvertPage>
               ),
               title: Text('${item.title}'),
               subtitle: InfoWidget.advertItemSubtitleWidget(
-                  title: item.username,
-                  subtitle: item.datetime,
-                  userTap: () {
-                    Navigator.of(context).pushNamed(
-                      Routes.advert_personal,
-                      arguments: item.username,
-                    );
-                  }),
+                  title: Tools.hideMobile(item.user),
+                  subtitle: item.datetime.split(' ').first),
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(Routes.advert_info, arguments: item);
+              },
             ),
           );
         },
         loadingBuilder: (_) {
           return InfoWidget.loadingWidget();
+        },
+        emptyBuilder: (callback, context) {
+          return InkWell(
+            child: Center(child: Text('没有数据'),),
+            onTap: callback,
+          );
         },
         noMoreViewBuilder: (list, context) {
           return InfoWidget.noMoreWidget(text: "总数: ${list.length}");
@@ -76,11 +78,9 @@ class _AdvertPageState extends State<AdvertPage>
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         heroTag: 'advertisement',
-        onPressed: () async {
-          print('object');
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          final token = sharedPreferences.getString(NServices.token);
+        onPressed: () {
+          final token = Global
+              .userInfo.token; //sharedPreferences.getString(STools.token);
           if (token != null && token.length > 0) {
             Navigator.of(context).pushNamed(Routes.add_advert);
           } else {
@@ -89,17 +89,5 @@ class _AdvertPageState extends State<AdvertPage>
         },
       ),
     );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
-
-  addAdvert() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    if (sharedPreferences.getString(NServices.token).length > 0) {
-      Navigator.of(context).pushNamed(Routes.add_advert);
-    } else {
-      Navigator.of(context).pushNamed(Routes.login);
-    }
   }
 }

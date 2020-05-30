@@ -4,10 +4,13 @@ import 'package:chain_app/models/sell_order_list.dart';
 import 'package:chain_app/pages/information/widgets/info_widget.dart';
 import 'package:chain_app/pages/trade/choice.dart';
 import 'package:chain_app/pages/trade/mine/buy_order_detail_page.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
 import 'package:chain_app/widgets/widget_global.dart';
+import 'package:dio/dio.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,6 +28,8 @@ class _TradePageState extends State<TradePage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TabController _controller;
 
+  double price = 0.3;
+
 //  List<Tab> tabs = Choice.tradeList().map((e) {
 //    return Tab(
 //      text: e.title,
@@ -38,6 +43,7 @@ class _TradePageState extends State<TradePage>
       length: 2,
       vsync: this,
     );
+    _requestPrice();
   }
 
   @override
@@ -46,7 +52,7 @@ class _TradePageState extends State<TradePage>
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('ECO交易区'),
+        title: Text('SD交易区'),
         actions: <Widget>[
           PopupMenuButton<ChoiceType>(
             icon: Icon(Icons.add_circle_outline),
@@ -60,25 +66,10 @@ class _TradePageState extends State<TradePage>
                   Navigator.of(context)
                       .pushNamed(Routes.add_trade, arguments: TradeType.sell);
                   break;
-                case ChoiceType.other:
-//                  Navigator.of(context).pushNamed(Routes.records);
-                  break;
-                case ChoiceType.sell_my:
-                  Navigator.of(context).pushNamed(Routes.sell_mine);
-                  break;
-                case ChoiceType.buy_my:
-                  Navigator.of(context).pushNamed(Routes.buy_mine);
-                  break;
-                case ChoiceType.sell_order:
-                  Navigator.of(context).pushNamed(Routes.sell_order);
-                  break;
-                case ChoiceType.buy_order:
-                  Navigator.of(context).pushNamed(Routes.buy_order);
-                  break;
               }
             },
             itemBuilder: (BuildContext context) {
-              return Choice.tradeList(other: true).map((choice) {
+              return Choice.tradeList().map((choice) {
                 final color = Theme.of(context).accentColor;
                 return PopupMenuItem(
                   child: Row(
@@ -100,11 +91,35 @@ class _TradePageState extends State<TradePage>
         children: [TradeBuyPage(), TradeSellPage()],
         controller: _controller,
       ),
+      floatingActionButton: Container(
+        width: 100,
+        height: 40,
+        child: FlatButton(
+          child: Text(
+            '参考价格:\n${price.toStringAsFixed(2)}',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: _requestPrice,
+          color: Colors.orange,
+          shape: WStyle.roundedBorder20,
+        ),
+      ),
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  _requestPrice() {
+    TradeService.queryPrice().then((value) {
+      print(value.data);
+      price = value.data;
+      setState(() {});
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
+    });
+  }
 }
 
 class TradeBuyPage extends StatefulWidget {
@@ -154,8 +169,8 @@ class _TradeBuyPageState extends State<TradeBuyPage> {
             final BuyList buyList = BuyList.fromJson(value.data);
             items.addAll(buyList.list);
             return int.parse(buyList.next) != 0;
-          }).catchError((onError) {
-            alertDialog(context, content: onError.toString());
+          }).catchError((error) {
+            SManager.dioErrorHandle(context, error);
           });
         },
         itemBuilder: (list, index, context) {
@@ -179,6 +194,12 @@ class _TradeBuyPageState extends State<TradeBuyPage> {
                       FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
+                        },
+                        child: Text('取消'),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
                           TradeService.buyOrder(item.serialNo).then((value) {
                             if (value.statusCode == 201) {
                               BuyOrder order = BuyOrder.fromJson(value.data);
@@ -190,20 +211,14 @@ class _TradeBuyPageState extends State<TradeBuyPage> {
                                 }),
                               );
                             } else {
-                              alertDialog(context, content: value.data);
+                              alertDialog(context, content: value.data.toString());
                             }
-                          }).catchError((onError) {
-                            alertDialog(context, content: onError.toString());
+                          }).catchError((error) {
+                            SManager.dioErrorHandle(context, error);
                           });
                         },
                         child: Text('确定'),
                       ),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('取消'),
-                      )
                     ],
                   );
                 },
@@ -214,7 +229,7 @@ class _TradeBuyPageState extends State<TradeBuyPage> {
                   ),
                 ),
                 color: Colors.orange,
-                shape: WidgetStyle.roundedBorder(
+                shape: WStyle.roundedBorder(
                   circular: 20,
                 ),
               ),
@@ -264,20 +279,15 @@ class _TradeSellPageState extends State<TradeSellPage> {
           );
         },
         onRetrieveData: (page, items, refresh) {
-          return TradeService.tradeSell(
-            p: page,
-            s: pageSize,
-          ).then((value) {
+          return TradeService.tradeSell(p: page, s: pageSize).then((value) {
             if (refresh) {
               items.clear();
             }
             final SellList sellList = SellList.fromJson(value.data);
             items.addAll(sellList.list);
             return int.parse(sellList.next) != 0;
-          }).catchError((onError) {
-            Fluttertoast.showToast(
-              msg: onError.toString(),
-            );
+          }).catchError((error) {
+            SManager.dioErrorHandle(context, error);
           });
         },
         itemBuilder: (list, index, context) {
@@ -300,26 +310,45 @@ class _TradeSellPageState extends State<TradeSellPage> {
                   ),
                 ),
                 color: Colors.orange,
-                shape: WidgetStyle.roundedBorder(
+                shape: WStyle.roundedBorder(
                   circular: 20,
                 ),
                 onPressed: () {
-                  TradeService.sellOrder(item.serialNo).then((value) {
-                    if (value.statusCode == 201) {
-                      SellOrder sellOrder = SellOrder.fromJson(value.data);
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) {
-                          return SellOrderDetailPage(
-                            sellOrder: sellOrder,
-                          );
-                        }),
-                      );
-                    } else {
-                      alertDialog(context, content: value.data);
-                    }
-                  }).catchError((onError) {
-                    alertDialog(context, content: onError.toString());
-                  });
+                  alertDialog(
+                    context,
+                    content: '确定要预定此订单？',
+                    actions: <Widget>[
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('取消'),
+                      ),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          TradeService.sellOrder(item.serialNo).then((value) {
+                            if (value.statusCode == 201) {
+                              SellOrder sellOrder =
+                                  SellOrder.fromJson(value.data);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) {
+                                  return SellOrderDetailPage(
+                                    sellOrder: sellOrder,
+                                  );
+                                }),
+                              );
+                            } else {
+                              alertDialog(context, content: value.data.toString());
+                            }
+                          }).catchError((error) {
+                            SManager.dioErrorHandle(context, error);
+                          });
+                        },
+                        child: Text('确定'),
+                      ),
+                    ],
+                  );
                 },
               ),
             ),

@@ -1,9 +1,16 @@
 import 'package:chain_app/models/sell_order_list.dart';
+import 'package:chain_app/pages/trade/widgets/trade_widget.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/services.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
+import 'package:chain_app/tools/tools.dart';
+import 'package:chain_app/widgets/images_preview.dart';
+import 'package:chain_app/widgets/route_animation.dart';
 import 'package:chain_app/widgets/widget_global.dart';
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SellOrderDetailPage extends StatefulWidget {
   final SellOrder sellOrder;
@@ -20,6 +27,10 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
   TextEditingController controller;
 
   String errorString;
+
+  TextStyle blue = WStyle.blue;
+  TextStyle green = WStyle.green;
+
   @override
   void initState() {
     super.initState();
@@ -29,7 +40,6 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.dispose();
   }
@@ -74,9 +84,6 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
   List<Widget> common({bool needPays = true}) {
     List<Widget> list = [];
 
-    var blue = WidgetStyle.blueStyle;
-    var green = WidgetStyle.greenStyle;
-
     list.add(ListTile(
       title: Text.rich(
         TextSpan(
@@ -116,7 +123,7 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
               style: green,
             ),
             TextSpan(
-              text: '  价格  ',
+              text: '  单价  ',
               style: blue,
             ),
             TextSpan(
@@ -179,16 +186,7 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
               ],
             ),
           ),
-          trailing: InkWell(
-            child: Text(
-              '复制',
-              style: blue,
-              textAlign: TextAlign.end,
-            ),
-            onTap: () {
-              _copy(pay.number);
-            },
-          ),
+          trailing: Widgets.copyWidgets(pay.number),
         );
       }).toList());
     }
@@ -202,8 +200,8 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
         children: <Widget>[
           FlatButton(
               color: Colors.orange,
-              shape: WidgetStyle.roundedBorder(circular: 20),
-              onPressed: alertDialog0,
+              shape: WStyle.roundedBorder20,
+              onPressed: _pickerImage,
               child: Text(
                 '已支付上传凭证',
                 style: TextStyle(color: Colors.white),
@@ -221,83 +219,14 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
     return list;
   }
 
-  alertDialog0() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              '提示',
-              textAlign: TextAlign.center,
-            ),
-            content: Container(
-              margin: const EdgeInsets.all(10),
-              child: SizedBox(
-                width: 300,
-                height: 150,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                          hintText: '请输入正确的支付单号', helperText: '交易单号提交成功后不可更改'),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  if (controller.text == null || controller.text.length == 0) {
-                    errorString = '请输入正确的支付单号';
-                  } else {
-                    errorString = null;
-                  }
-
-                  if (errorString != null) {
-                    alertDialog(context, content: errorString);
-                    return;
-                  }
-                  TradeService.sellFill(
-                    sellOrder.serialNo,
-                    controller.text,
-                  ).then((value) {
-                    if (value.statusCode == 201) {
-                      Navigator.of(context).pop();
-                      sellOrder = SellOrder.fromJson(value.data);
-                      setState(() {});
-                    } else {
-                      alertDialog(context, content: value.data);
-                    }
-                  }).catchError((onError) {
-                    alertDialog(context, content: onError.toString());
-                  });
-                },
-                child: Text('确定'),
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('取消'),
-              )
-            ],
-          );
-        });
-  }
-
   status01() {
+    String image = NServices.imageUrl(sellOrder.detail);
     List<Widget> list = [
       Divider(),
-      ListTile(
-        title: Text(
-          '付款信息',
-          style: WidgetStyle.blueStyle,
-        ),
-        subtitle: Text('${sellOrder.detail}'),
-      ),
+      TradeWidget.payWidget(image, onTap: () {
+        Navigator.of(context)
+            .push(RouteAnimation(ImagePreview(images: [image])));
+      }),
       Divider()
     ];
 
@@ -305,22 +234,34 @@ class _SellOrderDetailPageState extends State<SellOrderDetailPage> {
   }
 
   status02() {
+    String image = NServices.imageUrl(sellOrder.detail);
     List<Widget> list = [
       Divider(),
-      ListTile(
-        title: Text(
-          '付款信息',
-          style: WidgetStyle.blueStyle,
-        ),
-        subtitle: Text('${sellOrder.detail}'),
-      ),
+      TradeWidget.payWidget(image, onTap: () {
+        Navigator.of(context)
+            .push(RouteAnimation(ImagePreview(images: [image])));
+      }),
       Divider()
     ];
 
     return list;
   }
 
-  _copy(String text) {
-    WidgetStyle.copyContent(text);
+  _pickerImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    var compressImage = await Tools.imageCompress(image, sellOrder.serialNo);
+
+    TradeService.sellFillImage(sellOrder.serialNo, compressImage).then((value) {
+      if (value.statusCode == 201) {
+        Navigator.of(context).pop();
+        sellOrder = SellOrder.fromJson(value.data);
+        setState(() {});
+      } else {
+        alertDialog(context, content: value.data.toString());
+      }
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
+    });
   }
 }

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:chain_app/models/news_list.dart';
-import 'package:chain_app/tools/webservices.dart';
+import 'package:chain_app/tools/services/news_services.dart';
+import 'package:chain_app/tools/s_manager.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,10 +17,7 @@ class NewsDetailPage extends StatefulWidget {
 }
 
 class _NewsDetailPageState extends State<NewsDetailPage> {
-  // final Completer<WebViewController> _controller =
-  //     Completer<WebViewController>();
-
-  static final timeCount = 20;
+  static final timeCount = 180;
 
   Timer timer;
 
@@ -40,40 +38,37 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.item.title),),
+      appBar: AppBar(
+        title: Text(widget.item.title),
+      ),
       body: WebView(
-            initialUrl: widget.item.url,
-            javascriptMode: JavascriptMode.unrestricted,
-            navigationDelegate: (NavigationRequest request) {
-              return NavigationDecision.navigate;
-            },
-            onPageStarted: (String url) {
-              print('Page started loading: $url');
-            },
-            onPageFinished: (String url) {
-              print('Page finished loading: $url');
-            },
-            gestureNavigationEnabled: true,
-          ),
+        initialUrl: widget.item.url,
+        javascriptMode: JavascriptMode.unrestricted,
+        navigationDelegate: (NavigationRequest request) {
+          return NavigationDecision.navigate;
+        },
+        onPageStarted: (String url) {
+          print('Page started loading: $url');
+        },
+        onPageFinished: (String url) {
+          print('Page finished loading: $url');
+        },
+        gestureNavigationEnabled: true,
+      ),
       floatingActionButton: canAdd
           ? FloatingActionButton(
               onPressed: () {
                 if (!active) {
-                  WebServices.newsTask(date).then((value) {
-                    print(value);
-                    if (value.statusCode == 200) {
-                      Fluttertoast.showToast(
-                        msg: value.data,
-                        timeInSecForIos: 1,
-                      );
+                  NewsServices.newsTask(date).then((value) {
+                    int code = value.statusCode;
+                    var data = value.data;
+                    if (code == 200) {
+                      SManager.showMessage(value.data);
                       canAdd = false;
-                    } else if (value.statusCode == 201) {
+                    } else if (code == 201) {
                       canAdd = false;
-                      Fluttertoast.showToast(
-                        msg: '领取成功',
-                        timeInSecForIos: 1,
-                      );
-                    } else if (value.statusCode == 205) {
+                      SManager.showMessage('领取成功');
+                    } else if (code == 205) {
                       date = formatDate(
                         DateTime.now(),
                         [yyyy, '-', mm, '-', dd],
@@ -95,12 +90,12 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                         },
                       );
                     }
-
                     setState(() {});
-                  }).catchError((e) {});
+                  }).catchError((error) {
+                    SManager.dioErrorHandle(context, error);
+                  });
                 } else {
-                  Fluttertoast.showToast(
-                      msg: '请继续阅读，以达到时间要求', timeInSecForIos: 1);
+                  SManager.showMessage('请继续阅读，以达到时间要求');
                 }
               },
               child: Text(active ? '${timeCount - seconds}s' : '领取\n奖励'),
@@ -124,8 +119,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
       active = false;
     }
 
-    WebServices.taskCheck().then((value) {
-      if (value.statusCode == 202) {
+    NewsServices.taskCheck().then((value) {
+      int code = value.statusCode;
+      if (code == 202) {
         canAdd = false;
       } else {
         canAdd = true;
@@ -148,6 +144,8 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
         }
       }
       setState(() {});
-    }).catchError((e) {});
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
+    });
   }
 }

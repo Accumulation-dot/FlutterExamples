@@ -91,30 +91,28 @@ class _ShopPageState extends State<ShopPage> {
           Expanded(
             flex: 2,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  child: Text(
-                    '库存 100000',
-                    maxLines: 1,
-                  ),
-                ),
-                SizedBox(
-                  child: FlatButton(
-                    onPressed: () {
-                      print('press');
-                    },
-                    child: Text('租赁'),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    child: Text(
+                      '库存 100000',
+                      maxLines: 1,
                     ),
-                    color: Color.fromRGBO(255, 165, 79, 1),
                   ),
-                  width: 80,
-                  height: 30,
-                )
-              ],
-            ),
+                  SizedBox(
+                      child: FlatButton(
+                        onPressed: () {
+                          print('press');
+                        },
+                        child: Text('租赁'),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        color: Color.fromRGBO(255, 165, 79, 1),
+                      ),
+                      width: 80,
+                      height: 30)
+                ]),
           ),
         ],
       ),

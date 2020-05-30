@@ -55,7 +55,8 @@ class SellOrder extends Object {
     this.sell,
     this.statusDesc,
     this.status,
-    this.serialNo,this.detail,
+    this.serialNo,
+    this.detail,
   );
 
   factory SellOrder.fromJson(Map<String, dynamic> srcJson) =>

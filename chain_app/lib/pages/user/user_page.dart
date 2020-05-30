@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:chain_app/models/summary.dart';
 import 'package:chain_app/pages/user/widgets/action.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/routes.dart';
+import 'package:chain_app/tools/s_manager.dart';
 import 'package:chain_app/tools/webservices.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class UserPage extends StatefulWidget {
   @override
@@ -13,72 +12,12 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  List<UAction> actions = [
-    UAction(
-      iconData: Icons.person_pin,
-      title: '个人验证信息',
-      actionType: ActionType.personal,
-      route: Routes.personal_info,
-    ),
-    UAction(
-      iconData: Icons.account_balance_wallet,
-      title: '支付宝',
-      actionType: ActionType.pay,
-      route: Routes.pay,
-      needArgument: true,
-    ),
-    UAction(
-      iconData: Icons.credit_card,
-      title: '银行卡',
-      actionType: ActionType.bank,
-      route: Routes.pay,
-      needArgument: true,
-    ),
-//    UAction(
-//      iconData: Icons.description,
-//      title: '交易记录',
-//      actionType: ActionType.record,
-//      route: Routes.records,
-//    ),
-    UAction(
-      iconData: Icons.receipt,
-      title: '节点记录',
-      actionType: ActionType.machine_record,
-      route: Routes.machine_mine,
-    ),
-    UAction(
-      iconData: Icons.add_to_photos,
-      title: '我的任务',
-      actionType: ActionType.daily_task,
-      route: Routes.daily_task,
-    ),
-    UAction(
-      iconData: Icons.dehaze,
-      title: '交易',
-      actionType: ActionType.deal,
-      route: Routes.deal,
-    ),
-    UAction(
-      iconData: Icons.share,
-      title: '邀请好友',
-      actionType: ActionType.inviter,
-      route: Routes.inviter,
-    ),
-    UAction(
-      iconData: Icons.settings,
-      title: '设置',
-      actionType: ActionType.setting,
-      route: Routes.setting,
-    ),
-  ];
-
   Summary summary;
 
   bool isRequest = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _request();
   }
@@ -91,125 +30,190 @@ class _UserPageState extends State<UserPage> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              print('pressed');
-              if (this.isRequest) {
-                Fluttertoast.showToast(msg: '当前网络正在请求中，请稍后');
-                return;
+            icon: Icon(Icons.headset_mic),
+            onPressed: () =>
+                Navigator.of(context).pushNamed(Routes.cs).then((value) {
+              if (mounted) {
+                _request();
               }
-              _request();
-            },
+            }),
           )
         ],
       ),
-      body: CustomScrollView(
-        reverse: false,
-        shrinkWrap: false,
-        slivers: <Widget>[
-          SliverAppBar(
-            pinned: false,
-            expandedHeight: 180.0,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              background: Container(
-                color: Colors.green,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Center(),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 30,
-                          top: 10,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                              '用户名: ${summary != null ? summary.name : ''}',
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white)),
-                        ),
+      body: ListView(
+        children: _widgetHeader() + _body(context),
+      ),
+    );
+  }
+
+  List<Widget> _widgetHeader() {
+    return [
+      Card(
+        child: SizedBox(height: 100, child: Row(
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              child: Image.asset(
+                'images/icon.jpg',
+                width: 40,
+                height: 40,
+              ),
+            ),
+            (summary != null && summary.name != null)
+                ? Text('用户： \n${summary.name}', style: TextStyle(fontSize: 20),)
+                : Text(''),
+          ],
+        ),),
+      ),
+      Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              child: Text('我的资产', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+              alignment: Alignment.topLeft,
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            ListTile(
+              title: Container(
+                child: Row(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(2),
+                      child: FloatingActionButton(
+                        heroTag: 'sub1',
+                        onPressed: () {},
+                        child: Text('SD'),
                       ),
+                      width: 40,
+                      height: 40,
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 30,
-                          top: 10,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: <Widget>[
-                              Text(
-                                summary != null
-                                    ? '可用币: ${summary.count}, 购物币: ${summary.shop}'
-                                    : '可用币: 0.0, 购物币: 0.0',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              FlatButton(
-                                child: Text(
-                                  '查看',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(Routes.coins_record);
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                    Container(
+                      width: 20,
                     ),
-                    Expanded(
-                        child: Padding(
-                            padding: const EdgeInsets.only(
-                      left: 30,
-                      top: 10,
-                    )))
+                    (summary != null && summary.count != null)
+                        ? Text('${summary.count}')
+                        : Text('')
                   ],
                 ),
               ),
+              subtitle: Container(
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(2),
+                        child: FloatingActionButton(
+                          heroTag: 'sub2',
+                          child: Text('SP'),
+                        ),
+                        width: 40,
+                        height: 40,
+                      ),
+                      Container(
+                        width: 20,
+                      ),
+                      (summary != null && summary.shop != null)
+                          ? Text('${summary.shop}')
+                          : Text('')
+                    ],
+                  )),
+              trailing: FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.coins_record);
+                },
+                child: Text(
+                  '明细',
+                  style: TextStyle(color: Colors.white),
+                ),
+                shape: WStyle.roundedBorder20,
+                color: Colors.orange,
+              ),
             ),
-          ),
-          new SliverFixedExtentList(
-            itemExtent: 50.0,
-            delegate: new SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                //创建列表项
-                UAction action = actions[index];
-                return ListTile(
-                  leading: Icon(
-                    action.iconData,
-                    color: Theme.of(context).accentColor,
-                  ),
-                  title: Text('${action.title}'),
-                  trailing: trailing(action),
-                  onTap: () {
-                    if (action.needArgument) {
-                      Navigator.of(context).pushNamed(action.route,
-                          arguments: action.actionType);
-                    } else {
-                      Navigator.of(context).pushNamed(action.route);
-                    }
-                  },
-                );
-              },
-              childCount: actions.length, //50个列表项
-            ),
-          ),
-        ],
+          ],
+        )
       ),
-    );
+    ];
+  }
+
+  List<Widget> _body(BuildContext context) {
+    List<UAction> actions = [
+      UAction(
+          iconData: Icons.person_pin,
+          title: '个人验证信息',
+          actionType: ActionType.personal,
+          route: Routes.personal_info),
+      UAction(
+          iconData: Icons.account_balance_wallet,
+          title: '支付宝',
+          actionType: ActionType.pay,
+          route: Routes.pay,
+          needArgument: true),
+      UAction(
+          iconData: Icons.credit_card,
+          title: '银行卡',
+          actionType: ActionType.bank,
+          route: Routes.pay,
+          needArgument: true),
+      UAction(
+          iconData: Icons.receipt,
+          title: '节点记录',
+          actionType: ActionType.machine_record,
+          route: Routes.machine_mine),
+      UAction(
+          iconData: Icons.add_to_photos,
+          title: '我的任务',
+          actionType: ActionType.daily_task,
+          route: Routes.daily_task),
+      UAction(
+          iconData: Icons.dehaze,
+          title: '交易',
+          actionType: ActionType.deal,
+          route: Routes.deal),
+      UAction(
+          iconData: Icons.add_comment,
+          title: '我发布的广告',
+          actionType: ActionType.advert,
+          route: Routes.advert_mine),
+      UAction(
+          iconData: Icons.share,
+          title: '邀请好友',
+          actionType: ActionType.inviter,
+          route: Routes.inviter),
+      UAction(
+          iconData: Icons.person_add,
+          title: '我的团队',
+          actionType: ActionType.team,
+          route: Routes.team),
+      UAction(
+          iconData: Icons.settings,
+          title: '设置',
+          actionType: ActionType.setting,
+          route: Routes.setting),
+    ];
+    return actions.map((action) {
+      return ListTile(
+        leading: Icon(
+          action.iconData,
+          color: Theme.of(context).accentColor,
+        ),
+        title: Text('${action.title}'),
+        trailing: trailing(action),
+        onTap: () {
+          print(action.route);
+          Navigator.of(context)
+              .pushNamed(
+            action.route,
+            arguments: action.needArgument ? action.actionType : null,
+          )
+              .then((value) {
+            if (mounted) {
+              _request();
+            }
+          });
+        },
+      );
+    }).toList();
   }
 
   _request() async {
@@ -217,12 +221,12 @@ class _UserPageState extends State<UserPage> {
       this.isRequest = true;
     });
     WebServices.personSummary().then((value) {
-      print(value);
       this.summary = Summary.fromJson(value.data);
       this.isRequest = false;
       setState(() {});
-    }).catchError((e) {
+    }).catchError((error) {
       this.isRequest = false;
+      SManager.dioErrorHandle(context, error);
     });
   }
 

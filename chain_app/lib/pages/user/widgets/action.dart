@@ -14,6 +14,8 @@ enum ActionType {
   buy_order,
   deal,
   inviter,
+  team,
+  advert,
 }
 
 class UAction {

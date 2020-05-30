@@ -1,8 +1,16 @@
 import 'package:chain_app/models/buy_list.dart';
+import 'package:chain_app/pages/trade/widgets/trade_widget.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/services.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
+import 'package:chain_app/tools/tools.dart';
+import 'package:chain_app/widgets/images_preview.dart';
+import 'package:chain_app/widgets/route_animation.dart';
 import 'package:chain_app/widgets/widget_global.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class BuyDetailPage extends StatefulWidget {
   final BuyItem buyItem;
@@ -17,6 +25,9 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
   BuyItem item;
 
   TextEditingController controller;
+
+  TextStyle blue = WStyle.blue;
+  TextStyle green = WStyle.green;
 
   @override
   void initState() {
@@ -65,46 +76,32 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
       ListTile(
         title: Text(
           '订单号:',
-          style: TextStyle(color: Colors.blue),
+          style: blue,
         ),
+        trailing: Widgets.copyWidgets(item.serialNo),
       ),
       ListTile(
-        title: Text('${item.serialNo}'),
-        trailing: InkWell(
-          onTap: () {},
-          child: Text(
-            '复制',
-            style: TextStyle(color: Colors.blue),
-          ),
-        ),
+          title: Text(
+        '${item.serialNo}',
+        style: WStyle.green,
+      )),
+      ListTile(
+        title: Text.rich(WStyle.textSpans(
+            [WStyle.blueText('创建日期：'), WStyle.greenText(item.created)])),
       ),
       ListTile(
-          title: Text.rich(TextSpan(
-        text: '创建日期  ',
-        style: TextStyle(color: Colors.blue),
-        children: [
-          TextSpan(
-            text: '${item.created}',
-            style: TextStyle(color: Colors.black),
-          ),
-        ],
-      ))
-          //Text('创建日期：${item.created}'),
-          ),
-      ListTile(
-        title: Text.rich(TextSpan(
-          text: '数量 ',
-          style: TextStyle(color: Colors.blue),
-          children: [
-            TextSpan(
-                text: '${item.number}  ',
-                style: TextStyle(color: Colors.green)),
-            TextSpan(text: '价格 ', style: TextStyle(color: Colors.blue)),
-            TextSpan(
-                text: '${item.price}', style: TextStyle(color: Colors.green)),
+        title: Text.rich(WStyle.textSpans(
+          [
+            WStyle.blueText('数量 '),
+            WStyle.greenText('${item.number}'),
+            WStyle.blueText('总价 '),
+            WStyle.greenText((item.number * item.price).toStringAsFixed(2)),
           ],
         )),
-        trailing: Text('${item.statusDesc}'),
+        trailing: Text(
+          '${item.statusDesc}',
+          style: WStyle.green,
+        ),
       ),
       Divider(),
     ];
@@ -115,24 +112,28 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
   List<Widget> status0() {
     return [
       ListTile(
-        trailing: FlatButton(
-          onPressed: () {},
-          child: Text(
-            '取消',
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Colors.grey,
-          shape: WidgetStyle.roundedBorder(circular: 20),
-        ),
+        trailing: TradeWidget.cancelWidget(callback: () {
+          TradeService.buyCancel(item.serialNo).then((value) {
+            int code = value.statusCode;
+            if  (code == 202) {
+              SManager.showMessage('取消成功');
+              item = BuyItem.fromJson(value.data);
+              setState(() {
+
+              });
+            } else {
+              SManager.showMessage(value.data.toString());
+            }
+          }).catchError((error) {
+            SManager.dioErrorHandle(context, error);
+          });
+        }),
       )
     ];
   }
 
   /// 待付款
   List<Widget> status1() {
-    var blueTextStyle = WidgetStyle.blueStyle;
-
-    var greenTextStyle = WidgetStyle.greenStyle;
     List<Widget> widgets = [];
 
     widgets.add(ListTile(
@@ -146,7 +147,10 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
       ),
     ));
     widgets.add(ListTile(
-      title: Text('支付信息'),
+      title: Text(
+        '支付信息',
+        style: WStyle.blue,
+      ),
     ));
 
     widgets.addAll(item.records.pays.map((pay) {
@@ -154,38 +158,29 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
         isThreeLine: true,
         title: Text(
           '${pay.user}',
-          style: blueTextStyle,
+          style: blue,
         ),
         subtitle: Text.rich(
           TextSpan(
             text: '账号：',
-            style: blueTextStyle,
+            style: blue,
             children: [
               TextSpan(
                 text: '${pay.number}',
-                style: greenTextStyle,
+                style: green,
               ),
               TextSpan(
                 text: '\n支付方式: ',
-                style: blueTextStyle,
+                style: blue,
               ),
               TextSpan(
                 text: '${pay.typeDesc}',
-                style: greenTextStyle,
+                style: green,
               ),
             ],
           ),
         ),
-        trailing: InkWell(
-          child: Text(
-            '复制',
-            style: blueTextStyle,
-            textAlign: TextAlign.end,
-          ),
-          onTap: () {
-            WidgetStyle.copyContent(pay.number);
-          },
-        ),
+        trailing: Widgets.copyWidgets(pay.number),
       );
     }).toList());
     widgets.add(Divider());
@@ -196,8 +191,8 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
         children: <Widget>[
           FlatButton(
               color: Colors.orange,
-              shape: WidgetStyle.roundedBorder(circular: 20),
-              onPressed: alertDialog0,
+              shape: WStyle.roundedBorder20,
+              onPressed: _pickerImage,
               child: Text(
                 '已支付上传凭证',
                 style: TextStyle(color: Colors.white),
@@ -214,24 +209,19 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
     return widgets;
   }
 
+  /// 已经付款
   List<Widget> status2() {
+    String urls = NServices.imageUrl(item.records.detail);
     return [
-      ListTile(
-        title: Text(
-          '支付信息',
-          style: WidgetStyle.blueStyle,
-        ),
-        subtitle: Text('${item.records.detail}'),
-        trailing: InkWell(
-          child: Text(
-            '复制',
-            style: WidgetStyle.blueStyle,
+      TradeWidget.payWidget(urls, onTap: () {
+        Navigator.of(context).push(
+          RouteAnimation(
+            ImagePreview(
+              images: [urls],
+            ),
           ),
-          onTap: () {
-            WidgetStyle.copyContent(item.records.detail);
-          },
-        ),
-      ),
+        );
+      }),
       ListTile(
         title: Text.rich(
           TextSpan(
@@ -244,85 +234,29 @@ class _BuyDetailPageState extends State<BuyDetailPage> {
                 ),
               ]),
         ),
-        trailing: InkWell(
-          child: Text(
-            '复制',
-            style: WidgetStyle.blueStyle,
-          ),
-          onTap: () {
-            WidgetStyle.copyContent(item.records.user);
-          },
-        ),
+        trailing: Widgets.copyWidgets(item.records.user),
       ),
       Divider(),
     ];
   }
 
-  alertDialog0() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              '提示',
-              textAlign: TextAlign.center,
-            ),
-            content: Container(
-              margin: const EdgeInsets.all(10),
-              child: SizedBox(
-                width: 300,
-                height: 150,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    TextField(
-                      controller: controller,
-                      decoration: InputDecoration(
-                          hintText: '请输入正确的支付单号', helperText: '交易单号提交成功后不可更改'),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  String errorString;
-                  if (controller.text == null || controller.text.length == 0) {
-                    errorString = '请输入正确的支付单号';
-                  } else {
-                    errorString = null;
-                  }
+  _pickerImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-                  if (errorString != null) {
-                    alertDialog(context, content: errorString);
-                    return;
-                  }
-                  TradeService.buyFill(
-                    item.records.serialNo,
-                    controller.text,
-                  ).then((value) {
-                    if (value.statusCode == 201) {
-                      Navigator.of(context).pop();
-                      item = BuyItem.fromJson(value.data);
-                      setState(() {});
-                    } else {
-                      alertDialog(context, content: value.data);
-                    }
-                  }).catchError((onError) {
-                    alertDialog(context, content: onError.toString());
-                  });
-                },
-                child: Text('确定'),
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('取消'),
-              )
-            ],
-          );
+    var compressImage = await Tools.imageCompress(image, item.records.serialNo);
+
+    TradeService.buyFillImage(item.records.serialNo, compressImage)
+        .then((value) {
+      if (value.statusCode == 201) {
+        final BuyItem item = BuyItem.fromJson(value.data);
+        setState(() {
+          this.item = item;
         });
+      } else {
+        alertDialog(context, content: value.data.toString());
+      }
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
+    });
   }
 }

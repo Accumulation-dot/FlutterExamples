@@ -11,23 +11,11 @@ class _InfoPageState extends State<InfoPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TabController _controller;
 
-  final List<Tab> tabs = [
-    Tab(
-      text: '头条',
-    ),
-    Tab(
-      text: '广告',
-    ),
-  ];
-
-  final List<Widget> contents = [
-    NewsPage(),
-    AdvertPage(),
-  ];
+  final length = 3;
 
   @override
   void initState() {
-    _controller = TabController(vsync: this, length: tabs.length);
+    _controller = TabController(vsync: this, length: length);
     super.initState();
   }
 
@@ -43,20 +31,31 @@ class _InfoPageState extends State<InfoPage>
     return Scaffold(
       appBar: AppBar(
         title: TabBar(
-          tabs: tabs,
+          tabs: [
+            Tab(
+              text: '头条',
+            ),
+            Tab(
+              text: '广告',
+            ),
+            Tab(
+              text: '商城',
+            )
+          ],
           controller: _controller,
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.camera_alt,
-            ),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: TabBarView(
-        children: contents,
+        children: [
+          NewsPage(),
+          AdvertPage(),
+          Center(
+            child: Text(
+              '等待开放',
+              textAlign: TextAlign.center,
+            ),
+          )
+        ],
         controller: _controller,
       ),
     );

@@ -1,8 +1,12 @@
-import 'dart:math';
-
 import 'package:chain_app/models/sell_list.dart';
+import 'package:chain_app/pages/trade/widgets/trade_widget.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/services.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
+import 'package:chain_app/widgets/images_preview.dart';
+import 'package:chain_app/widgets/route_animation.dart';
 import 'package:chain_app/widgets/widget_global.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,49 +70,30 @@ class _SellDetailPageState extends State<SellDetailPage> {
   List<Widget> common() {
     List<Widget> wid = [
       ListTile(
-        title: Text(
-          '订单号:',
-          style: TextStyle(color: Colors.blue),
-        ),
+        title: Text.rich(WStyle.blueText('订单号:')),
+        trailing: Widgets.copyWidgets(item.serialNo),
       ),
+      ListTile(title: Text.rich(WStyle.greenText(item.serialNo))),
       ListTile(
-        title: Text('${item.serialNo}'),
-        trailing: InkWell(
-          onTap: () {},
-          child: Text(
-            '复制',
-            style: TextStyle(color: Colors.blue),
-          ),
-        ),
-      ),
+          title: Text.rich(
+        WStyle.textSpans([
+          WStyle.blueText('创建日期: '),
+          WStyle.greenText('${item.created}'),
+        ]),
+      )),
       ListTile(
-          title: Text.rich(TextSpan(
-        text: '创建日期  ',
-        style: TextStyle(color: Colors.blue),
-        children: [
-          TextSpan(
-            text: '${item.created}',
-            style: TextStyle(color: Colors.black),
-          ),
-        ],
-      ))
-          //Text('创建日期：${item.created}'),
-          ),
-      ListTile(
-        title: Text.rich(TextSpan(
-          text: '数量 ',
-          style: TextStyle(color: Colors.blue),
-          children: [
-            TextSpan(
-                text: '${item.number}  ',
-                style: TextStyle(color: Colors.green)),
-            TextSpan(text: '价格 ', style: TextStyle(color: Colors.blue)),
-            TextSpan(
-                text: '${item.price}', style: TextStyle(color: Colors.green)),
-          ],
-        )),
-        trailing: Text('${item.statusDesc}'),
-      ),
+          title: Text.rich(WStyle.textSpans([
+            WStyle.blueText('数量 '),
+            WStyle.greenText('${item.number}'),
+            WStyle.blueText(' 单价 '),
+            WStyle.greenText('${item.price}'),
+            WStyle.blueText(' 总价 '),
+            WStyle.greenText('${item.price * item.number}')
+          ])),
+          trailing: Text(
+            '${item.statusDesc}',
+            style: WStyle.green,
+          )),
     ];
 
     return wid;
@@ -118,15 +103,22 @@ class _SellDetailPageState extends State<SellDetailPage> {
   List<Widget> status0() {
     return [
       ListTile(
-        trailing: FlatButton(
-          onPressed: () {},
-          child: Text(
-            '取消',
-            style: TextStyle(color: Colors.white),
-          ),
-          color: Colors.grey,
-          shape: WidgetStyle.roundedBorder(circular: 20),
-        ),
+        trailing: TradeWidget.cancelWidget(callback: () {
+          TradeService.sellCancel(item.serialNo).then((value) {
+            int code = value.statusCode;
+            if  (code == 202) {
+              SManager.showMessage('取消成功');
+              item = SellItem.fromJson(value.data);
+              setState(() {
+
+              });
+            } else {
+              SManager.showMessage(value.data.toString());
+            }
+          }).catchError((error) {
+            SManager.dioErrorHandle(context, error);
+          });
+        }),
       )
     ];
   }
@@ -140,17 +132,18 @@ class _SellDetailPageState extends State<SellDetailPage> {
 
   /// 某人已付款
   List<Widget> status2() {
+    String urls = NServices.imageUrl(item.detail);
     return [
+      TradeWidget.payWidget(urls, onTap: () {
+        Navigator.of(context)
+            .push(RouteAnimation(ImagePreview(images: [urls])));
+      }),
+      Divider(),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Center(
-            child: FlatButton(
-              child: Text(
-                '确认收款',
-                style: TextStyle(color: Colors.white),
-              ),
-              color: Colors.orangeAccent,
+            child: TradeWidget.receivedWidget(
               onPressed: () {
                 alertDialog(context,
                     content: '请确认你已经收到转账，否则确认后币不可找回?',
@@ -164,10 +157,10 @@ class _SellDetailPageState extends State<SellDetailPage> {
                                 item = SellItem.fromJson(value.data);
                                 setState(() {});
                               } else {
-                                alertDialog(context, content: value.data);
+                                alertDialog(context, content: value.data.toString());
                               }
-                            }).catchError((e) {
-                              alertDialog(context, content: e.toString());
+                            }).catchError((error) {
+                              SManager.dioErrorHandle(context, error);
                             });
                           },
                           child: Text('确定')),
@@ -179,32 +172,18 @@ class _SellDetailPageState extends State<SellDetailPage> {
                       )
                     ]);
               },
-              shape: WidgetStyle.roundedBorder(circular: 20),
             ),
           ),
-          Center(
-            child: FlatButton(
-                onPressed: () {},
-                child: FlatButton(
-                  child: Text(
-                    '未收到款',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.redAccent,
-                  onPressed: () {},
-                  shape: WidgetStyle.roundedBorder(circular: 20),
-                )),
-          )
+          Center(child: TradeWidget.objectionWidget(onPressed: () {}))
         ],
-      )
+      ),
+      TradeWidget.confirmTips(),
     ];
   }
 
   /// 完成
   List<Widget> status3() {
-    List<Widget> wid = [
-//      ListTile(title: Text('${item.detail}'),)
-    ];
+    List<Widget> wid = [];
 
     return wid;
   }

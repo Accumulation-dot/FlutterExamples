@@ -1,6 +1,7 @@
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/global.dart';
 import 'package:chain_app/tools/routes.dart';
+import 'package:chain_app/tools/s_manager.dart';
 import 'package:chain_app/tools/webservices.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -96,15 +97,14 @@ class _PersonalPageState extends State<PersonalPage> {
                             .then((value) {
                           print(value);
                           if (value.statusCode == 201) {
-                            Fluttertoast.showToast(
-                                msg: '信息认证成功', timeInSecForIos: 1);
+                            SManager.showMessage('信息认证成功');
                             Navigator.of(context)
                                 .popUntil(ModalRoute.withName(Routes.tab));
                           } else {
-                            alertDialog(context, content: value.data);
+                            alertDialog(context, content: value.data.toString());
                           }
-                        }).catchError((e) {
-                          alertDialog(context, content: e.toString());
+                        }).catchError((error) {
+                          SManager.dioErrorHandle(context, error);
                         });
                       },
                 child: Text('提交'),
@@ -116,10 +116,8 @@ class _PersonalPageState extends State<PersonalPage> {
     );
   }
 
-  _request() async {
+  _request() {
     WebServices.identifier().then((value) {
-      print(value.data);
-      print(value.statusCode);
       if (value.statusCode == 200) {
         this.name = value.data['name'] as String;
         this.identifier = value.data['number'] as String;
@@ -130,9 +128,8 @@ class _PersonalPageState extends State<PersonalPage> {
           _identifier.text = this.identifier;
         });
       } else if (value.statusCode == 204) {}
-    }).catchError((e) {
-      Navigator.of(context).popUntil(ModalRoute.withName(Routes.tab));
-      Fluttertoast.showToast(msg: e.toString());
+    }).catchError((error) {
+      SManager.dioErrorHandle(context, error);
     });
   }
 }

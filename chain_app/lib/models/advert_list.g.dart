@@ -27,9 +27,7 @@ Map<String, dynamic> _$AdvertListToJson(AdvertList instance) =>
 AdvertItem _$AdvertItemFromJson(Map<String, dynamic> json) {
   return AdvertItem(
     json['id'] as int,
-    json['user'] == null
-        ? null
-        : UserSummary.fromJson(json['user'] as Map<String, dynamic>),
+    json['user'] as String,
     json['title'] as String,
     json['img'] as String,
     json['url'] as String,

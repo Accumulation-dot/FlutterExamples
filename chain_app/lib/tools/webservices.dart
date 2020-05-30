@@ -1,4 +1,5 @@
-import 'package:chain_app/tools/services.dart';
+import 'package:chain_app/tools/services/app_config.dart';
+import 'package:chain_app/tools/services/services.dart';
 import 'package:dio/dio.dart';
 
 class Uri {
@@ -20,13 +21,6 @@ class Uri {
   static const task_check = 'news/check.json';
 
   static const news_task = 'news/task.json';
-
-  /// machine
-  static const machine_list = 'machine/list.json';
-
-  static const machine_order = 'machine/order.json';
-
-  static const machine_mine = 'machine/mine.json';
 
   static const person_identifier = 'user/identify.json';
 
@@ -57,15 +51,13 @@ class WebServices {
   /// 登陆
   static Future<Response> login(String u, String p) async {
     return NServices.request(Uri.login,
-        queryParameters: {username: u, password: p},
-        method: NServices.method_post);
+        queryParameters: {username: u, password: p}, method: method_post);
   }
 
   /// 注册
   static Future<Response> register(String u, String p) async {
     return NServices.request('user/register.json',
-        queryParameters: {username: u, password: p},
-        method: NServices.method_post);
+        queryParameters: {username: u, password: p}, method: method_post);
   }
 
   /// 获取新闻列表
@@ -116,7 +108,7 @@ class WebServices {
     };
 
     return NServices.request(bank ? Uri.pay_bank : Uri.pay_ali,
-        queryParameters: parameters, method: NServices.method_post);
+        queryParameters: parameters, method: method_post);
 
 //    if (bank) {
 //    } else {
@@ -142,7 +134,7 @@ class WebServices {
     return NServices.request(
       Uri.pay_update + "$id.json",
       queryParameters: parameters,
-      method: NServices.method_patch,
+      method: method_patch,
     );
   }
 
@@ -150,21 +142,21 @@ class WebServices {
     return NServices.request(
       Uri.pay_update + "$id.json",
       queryParameters: {'use': false},
-      method: NServices.method_patch,
+      method: method_patch,
     );
   }
 
-  static Future<Response> taskCheck() async {
-    return NServices.request(
-      Uri.task_check,
-    );
-  }
+//  static Future<Response> taskCheck() async {
+//    return NServices.request(
+//      Uri.task_check,
+//    );
+//  }
 
   static Future<Response> newsTask(String date) async {
     return NServices.request(
       Uri.news_task,
       queryParameters: {'date': date},
-      method: NServices.method_post,
+      method: method_post,
     );
   }
 
@@ -175,49 +167,14 @@ class WebServices {
     );
   }
 
-  static Future<Response> machineList() async {
-    return NServices.request(
-      Uri.machine_list,
-    );
-  }
-
-  static Future<Response> machineOrder(String serialNo) async {
-    return NServices.request(
-      Uri.machine_order,
-      queryParameters: {"s_no": serialNo},
-      method: NServices.method_post,
-    );
-  }
-
-  // all 0, 1 未过期， 2 已过期
-  static Future<Response> myMachine({int s = 0}) async {
-    return NServices.request(
-      Uri.machine_mine,
-      queryParameters: {status: s},
-    );
-  }
-
-  static Future<Response> machineAll() async {
-    return myMachine();
-  }
-
-  static Future<Response> machineExpired() async {
-    return myMachine(s: 2);
-  }
-
-  static Future<Response> machineUsed() async {
-    return myMachine(s: 1);
-  }
-
   /// 获取信息
-  static Future<Response> identifier() async {
+  static Future<Response> identifier() {
     return NServices.request(Uri.person_identifier);
   }
 
   static Future<Response> fillIdentifier(String name, String number) async {
     return NServices.request(Uri.person_identifier,
-        method: NServices.method_post,
-        queryParameters: {'name': name, 'number': number});
+        method: method_post, queryParameters: {'name': name, 'number': number});
   }
 
   static Future<Response> personSummary() async {

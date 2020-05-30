@@ -1,7 +1,13 @@
 import 'package:chain_app/models/buy_list.dart';
+import 'package:chain_app/pages/trade/widgets/trade_widget.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
-import 'package:chain_app/tools/trade_services.dart';
-import 'package:chain_app/widgets/widget_global.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/services.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
+import 'package:chain_app/widgets/images_preview.dart';
+import 'package:chain_app/widgets/route_animation.dart';
+
 import 'package:flutter/material.dart';
 
 class BuyOrderDetailPage extends StatefulWidget {
@@ -14,6 +20,9 @@ class BuyOrderDetailPage extends StatefulWidget {
 
 class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
   BuyOrder order;
+
+  TextStyle blue = WStyle.blue;
+  TextStyle green = WStyle.green;
 
   @override
   void initState() {
@@ -51,9 +60,6 @@ class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
 
   common() {
     List<Widget> widgets = [];
-
-    var blue = WidgetStyle.blueStyle;
-    var green = WidgetStyle.greenStyle;
 
     widgets.add(ListTile(
       title: Text.rich(
@@ -93,7 +99,7 @@ class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
               style: green,
             ),
             TextSpan(
-              text: '  价格  ',
+              text: '  单价  ',
               style: blue,
             ),
             TextSpan(
@@ -131,15 +137,13 @@ class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
   }
 
   List<Widget> status1() {
+    String images = NServices.imageUrl(order.detail);
     List<Widget> widgets = [
-      ListTile(
-        title: Text.rich(
-          TextSpan(text: '支付单号:', style: WidgetStyle.blueStyle, children: [
-            TextSpan(text: order.detail, style: WidgetStyle.greenStyle)
-          ]),
-        ),
-        trailing: WidgetStyle.copyWidget(order.detail),
-      ),
+      TradeWidget.payWidget(images, onTap: () {
+        Navigator.of(context).push(RouteAnimation(ImagePreview(
+          images: [images],
+        )));
+      }),
       Divider(),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -151,10 +155,10 @@ class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
                   order = BuyOrder.fromJson(value.data);
                   setState(() {});
                 } else {
-                  alertDialog(context, content: value.data);
+                  alertDialog(context, content: value.data.toString());
                 }
-              }).catchError((onError) {
-                alertDialog(context, content: onError.toString());
+              }).catchError((error) {
+                SManager.dioErrorHandle(context, error);
               });
             },
             color: Colors.orange,
@@ -162,41 +166,26 @@ class _BuyOrderDetailPageState extends State<BuyOrderDetailPage> {
               '已收款',
               style: TextStyle(color: Colors.white),
             ),
-            shape: WidgetStyle.roundedBorder(circular: 20),
+            shape: WStyle.roundedBorder20,
           ),
-          FlatButton(
-            onPressed: () {},
-            color: Colors.grey,
-            child: Text(
-              '未收款, 对支付单号有异议',
-              style: TextStyle(color: Colors.white),
-            ),
-            shape: WidgetStyle.roundedBorder(circular: 20),
-          )
+//          FlatButton(
+//            onPressed: () {},
+//            color: Colors.grey,
+//            child: Text(
+//              '未收款, 对支付单号有异议',
+//              style: TextStyle(color: Colors.white),
+//            ),
+//            shape: WStyle.roundedBorder20,
+//          )
+          TradeWidget.objectionWidget(onPressed: () {})
         ],
       ),
-      Text(
-        'tips:如果已收到支付款请点击已收款，\n如果未收到款请点击未收款对支付订单有异议！',
-        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
-        textAlign: TextAlign.end,
-      )
+      TradeWidget.confirmTips(),
     ];
     return widgets;
   }
 
   List<Widget> status2() {
-    List<Widget> widgets = [
-      ListTile(
-        title: Text.rich(
-          TextSpan(text: '支付单号:', style: WidgetStyle.blueStyle, children: [
-            TextSpan(text: order.detail, style: WidgetStyle.greenStyle)
-          ]),
-        ),
-        trailing: WidgetStyle.copyWidget(order.detail),
-      ),
-      Divider(),
-    ];
-
-    return widgets;
+    return [Divider()];
   }
 }

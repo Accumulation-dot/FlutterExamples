@@ -1,6 +1,7 @@
 import 'package:chain_app/pages/user/widgets/action.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/routes.dart';
+import 'package:chain_app/tools/s_manager.dart';
 import 'package:chain_app/tools/webservices.dart';
 import 'package:flutter/material.dart';
 
@@ -82,8 +83,10 @@ class _PayDetailPageState extends State<PayDetailPage> {
             ),
             Center(
               child: RaisedButton(
+                child: Text('提交'),
                 onPressed: () {
                   FocusScope.of(context).requestFocus(FocusNode());
+
                   WebServices.addPay(
                           type: item.value,
                           name: item.text,
@@ -94,15 +97,12 @@ class _PayDetailPageState extends State<PayDetailPage> {
                       Navigator.of(context)
                           .popUntil(ModalRoute.withName(Routes.tab));
                     } else {
-                      alertDialog(context, title: '提示', content: value.data);
+                      alertDialog(context, title: '提示', content: value.data.toString());
                     }
-                  }).catchError((e) {
-                    alertDialog(context, title: '发生错误', content: e.toString());
-//                    Scaffold.of(context)
-//                        .showSnackBar(SnackBar(content: Text(e.toString())));
+                  }).catchError((error) {
+                    SManager.dioErrorHandle(context, error);
                   });
                 },
-                child: Text('提交'),
               ),
             ),
           ],

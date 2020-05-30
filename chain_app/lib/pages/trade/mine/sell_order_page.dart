@@ -1,7 +1,8 @@
-import 'package:chain_app/models/sell_list.dart';
 import 'package:chain_app/models/sell_order_list.dart';
 import 'package:chain_app/pages/trade/mine/sell_order_detail_page.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/style/w_style.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
 import 'package:chain_app/widgets/widget_global.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
@@ -59,8 +60,7 @@ class _SellOrderPageState extends State<SellOrderPage>
       return InfiniteListView<SellOrder>(
           pageSize: size,
           onRetrieveData: (page, items, refresh) {
-            return TradeService.sellOrdered(e, p: page, s: size)
-                .then((value) {
+            return TradeService.sellOrdered(e, p: page, s: size).then((value) {
               if (refresh) {
                 items.clear();
               }
@@ -68,7 +68,9 @@ class _SellOrderPageState extends State<SellOrderPage>
 
               items.addAll(sellOrderList.list);
               return int.parse(sellOrderList.next) != 0;
-            }).catchError((e) {});
+            }).catchError((error) {
+              SManager.dioErrorHandle(context, error);
+            });
           },
           itemBuilder: (items, index, context) {
             SellOrder item = items[index];
@@ -79,23 +81,26 @@ class _SellOrderPageState extends State<SellOrderPage>
                   price: item.sell.price,
                 ),
                 subtitle: Text(item.created),
-                trailing: RaisedButton(
-                  color: Colors.orange,
-                  child: Text(
-                    '查看',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  shape: WidgetStyle.roundedBorder(circular: 20),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) {
-                        return SellOrderDetailPage(
-                          sellOrder: item,
-                        );
-                      }),
-                    );
-                  },
-                ),
+                trailing: e == 2
+                    ? Text(
+                        '完成',
+                        style: TextStyle(color: Colors.green),
+                      )
+                    : RaisedButton(
+                        color: Colors.orange,
+                        child: Text(
+                          '查看',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        shape: WStyle.roundedBorder20,
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) {
+                              return SellOrderDetailPage(sellOrder: item);
+                            }),
+                          );
+                        },
+                      ),
               ),
             );
           });

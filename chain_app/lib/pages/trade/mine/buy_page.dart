@@ -1,6 +1,8 @@
 import 'package:chain_app/models/buy_list.dart';
 import 'package:chain_app/pages/trade/mine/buy_detail_page.dart';
-import 'package:chain_app/tools/trade_services.dart';
+import 'package:chain_app/style/w_style.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
 import 'package:chain_app/widgets/widget_global.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 5, vsync: this);
+    _controller = TabController(length: 4, vsync: this);
   }
 
 //  TabBar(
@@ -34,11 +36,10 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         bottom: Widgets.tabBar([
-          Tab(text: '出售中'),
+          Tab(text: '求购中'),
           Tab(text: '待付款'),
           Tab(text: '已付款'),
           Tab(text: '已完成'),
-          Tab(text: '已取消'),
         ], _controller),
         centerTitle: true,
         title: Text('我的求购信息'),
@@ -52,7 +53,7 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
 
   tabTabChildren() {
     int size = 10;
-    return [0, 1, 2, 3, 4].asMap().keys.map((e) {
+    return [0, 1, 2, 3].asMap().keys.map((e) {
       return InfiniteListView<BuyItem>(
           pageSize: size,
           onRetrieveData: (page, items, refresh) {
@@ -65,7 +66,9 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
               BuyList buyList = BuyList.fromJson(value.data);
               items.addAll(buyList.list);
               return int.parse(buyList.next) != 0;
-            }).catchError((e) {});
+            }).catchError((error) {
+              SManager.dioErrorHandle(context, error);
+            });
           },
           itemBuilder: (items, index, context) {
             BuyItem item = items[index];
@@ -76,21 +79,27 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
                   price: item.price,
                 ),
                 subtitle: Text(item.created),
-                trailing: RaisedButton(
-                  color: Colors.orange,
-                  child: Text(
-                    '查看',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  shape: WidgetStyle.roundedBorder(circular: 20),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                      return BuyDetailPage(
-                        buyItem: item,
-                      );
-                    }));
-                  },
-                ),
+                trailing: e == 3
+                    ? Text(
+                        '完成',
+                        style: TextStyle(color: Colors.green),
+                      )
+                    : RaisedButton(
+                        color: Colors.orange,
+                        child: Text(
+                          '查看',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        shape: WStyle.roundedBorder20,
+                        onPressed: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (_) {
+                            return BuyDetailPage(
+                              buyItem: item,
+                            );
+                          }));
+                        },
+                      ),
               ),
             );
           });

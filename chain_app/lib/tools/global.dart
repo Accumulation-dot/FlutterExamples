@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:chain_app/models/user_info.dart';
-import 'package:chain_app/tools/services.dart';
+import 'package:chain_app/tools/services/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Global {
@@ -17,6 +17,8 @@ class Global {
     if (_userInfo != null) {
       try {
         userInfo = UserInfo.fromJson(jsonDecode(_userInfo));
+        print(userInfo.token);
+        print(userInfo.code);
         NServices.updateAuthorization(userInfo.token);
       } catch (e) {
         print(e);
@@ -33,6 +35,17 @@ class Global {
     _prefs = await SharedPreferences.getInstance();
     userInfo = null;
     _prefs.remove(profileKey);
+  }
+
+  static bool logoutSuccess() {
+    print('_prefs.get is ${_prefs.get(profileKey)}');
+    if (_prefs.get(profileKey) != null) {
+      userInfo = null;
+      _prefs.remove(profileKey);
+      print('_prefs.get is ${_prefs.get(profileKey)}');
+      return true;
+    }
+    return false;
   }
 
   static get token => userInfo != null ? userInfo.token : null;

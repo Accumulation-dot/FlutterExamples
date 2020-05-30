@@ -1,8 +1,9 @@
 import 'package:chain_app/pages/trade/choice.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/trade_services.dart';
-import 'package:chain_app/widgets/widget_global.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/trade_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +50,10 @@ class _TradeAddPageState extends State<TradeAddPage> {
             padding: edgeInsets,
             child: TextField(
               decoration: InputDecoration(
-                  labelText: '输入数量', helperText: widget.tradeType == TradeType.sell ? '消耗输入数量1.5倍: 25% 手续费, 25% 购物币(扣入到购物币)': null),
+                  labelText: '输入数量',
+                  helperText: widget.tradeType == TradeType.sell
+                      ? '消耗输入数量1.4倍: 25% 手续费, 15% 购物币(扣入到购物币)'
+                      : null),
               controller: number,
               enableInteractiveSelection: false,
               inputFormatters: [
@@ -63,7 +67,9 @@ class _TradeAddPageState extends State<TradeAddPage> {
             padding: edgeInsets,
             child: TextField(
               controller: price,
-              decoration: InputDecoration(labelText: '请输入单价',),
+              decoration: InputDecoration(
+                labelText: '请输入单价',
+              ),
               enableInteractiveSelection: false,
               inputFormatters: [
                 LengthLimitingTextInputFormatter(8),
@@ -81,55 +87,47 @@ class _TradeAddPageState extends State<TradeAddPage> {
                   color: Colors.white,
                 ),
               ),
-              shape: WidgetStyle.roundedBorder(
-                circular: 20,
-              ),
+              shape: WStyle.roundedBorder20,
               color: Colors.orange,
               onPressed: () {
                 int n = int.parse(number.text);
                 int p = int.parse(price.text);
                 if (n == 0 || p == 0) {
-                  alertDialog(context, content: '请输入正确的数量和价格!');
+                  alertDialog(context, content: '请输入正确的数量和单价!');
                   return;
                 }
                 switch (widget.tradeType) {
                   case TradeType.sell:
                     {
-                      TradeService.addSell(
-                        num: n,
-                        pri: p,
-                      ).then((value) {
+                      TradeService.addSell(num: n, pri: p).then((value) {
                         if (value.statusCode == 201) {
-                          Fluttertoast.showToast(msg: '添加成功');
+                          SManager.showMessage('添加成功');
                           if (mounted) {
                             Navigator.of(context)
                                 .popAndPushNamed(Routes.sell_mine);
                           }
                         } else {
-                          alertDialog(context, content: value.data);
+                          alertDialog(context, content: value.data.toString());
                         }
-                      }).catchError((e) {
-                        alertDialog(context, content: e.toString());
+                      }).catchError((error) {
+                        SManager.dioErrorHandle(context, error);
                       });
                       break;
                     }
                   case TradeType.buy:
                     {
-                      TradeService.addBuy(
-                        num: n,
-                        pri: p,
-                      ).then((value) {
+                      TradeService.addBuy(num: n, pri: p).then((value) {
                         if (value.statusCode == 201) {
-                          Fluttertoast.showToast(msg: '添加成功');
+                          SManager.showMessage('添加成功');
                           if (mounted) {
                             Navigator.of(context)
                                 .popAndPushNamed(Routes.buy_mine);
                           }
                         } else {
-                          alertDialog(context, content: value.data);
+                          alertDialog(context, content: value.data.toString());
                         }
-                      }).catchError((e) {
-                        alertDialog(context, content: e.toString());
+                      }).catchError((error) {
+                        SManager.dioErrorHandle(context, error);
                       });
                     }
                     break;

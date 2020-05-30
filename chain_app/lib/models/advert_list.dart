@@ -31,7 +31,8 @@ class AdvertItem extends Object {
   int id;
 
   @JsonKey(name: 'user')
-  UserSummary user;
+  String user;
+  //UserSummary user;
 
   @JsonKey(name: 'username')
   String username;

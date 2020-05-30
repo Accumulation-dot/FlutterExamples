@@ -35,6 +35,7 @@ SellItem _$SellItemFromJson(Map<String, dynamic> json) {
     json['status'] as int,
     json['serial_no'] as String,
     (json['price'] as num)?.toDouble(),
+    json['detail'] as String,
   );
 }
 
@@ -47,4 +48,5 @@ Map<String, dynamic> _$SellItemToJson(SellItem instance) => <String, dynamic>{
       'status': instance.status,
       'serial_no': instance.serialNo,
       'price': instance.price,
+      'detail': instance.detail,
     };

@@ -61,7 +61,10 @@ class _PayPageState extends State<PayPage> {
           Pay item = list[index];
           return Card(
             child: ListTile(
-              title: item.typeDesc != null ? Text(item.typeDesc) : null,
+              title: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Text(item.typeDesc),
+              ),
               subtitle: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Text(

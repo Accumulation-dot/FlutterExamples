@@ -1,14 +1,21 @@
-import 'dart:developer';
+import 'dart:math';
 
 import 'package:chain_app/models/user_info.dart';
+import 'package:chain_app/pages/login/login.dart';
+import 'package:chain_app/pages/login/register.dart';
+import 'package:chain_app/pages/login/widgets/login_widget.dart';
+import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/global.dart';
 import 'package:chain_app/tools/routes.dart';
-import 'package:chain_app/tools/services.dart';
-import 'package:chain_app/tools/webservices.dart';
+import 'package:chain_app/tools/s_manager.dart';
+import 'package:chain_app/tools/services/services.dart';
+import 'package:chain_app/tools/services/login_services.dart';
+import 'package:chain_app/tools/tools.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -16,175 +23,150 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String _checkStr;
-  TextEditingController _phone = TextEditingController();
-  TextEditingController _password = TextEditingController();
-
   int _loginState = 0;
 
-  bool _checkPhone() {
-  return (_phone.text.isNotEmpty &&
-      _phone.text.trim().length == 11);
-  }
+  String _random = Tools.randomString();
 
-  bool _checkPwd() {
-    return (_password.text.isNotEmpty &&
-        _password.text.trim().length >= 6 &&
-        _password.text.trim().length <= 10);
-  }
+  TextEditingController _randomController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_loginState == 0 ? '极速登录' : '极速注册'),
-        centerTitle: true,
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              setState(() {
-                _loginState = _loginState == 1 ? 0 : 1;
-              });
-            },
-            child: Text(
-              _loginState == 0 ? '极速注册' : '极速登陆',
-              style: TextStyle(color: Colors.white),
-            ),
-          )
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(20.0, 30.0, 20.0, 15.0),
-                child: Stack(
-                  alignment: Alignment(1.0, 1.0),
-                  children: <Widget>[
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0.0, 0.0, 5.0, 0.0),
-                            child: Icon(Icons.account_box),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(11),
-                                WhitelistingTextInputFormatter.digitsOnly,
-                              ],
-                              controller: _phone,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                hintText: '请输入手机号码',
-                              ),
-                            ),
-                          ),
-                        ]),
-                    IconButton(
-                      icon: Icon(Icons.clear, color: Colors.black45),
-                      onPressed: () {
-                        _phone.clear();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 40.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 5.0, 0.0),
-                        child: Icon(Icons.vpn_key),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _password,
-                          decoration: InputDecoration(
-                            hintText: '请输入密码',
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.clear, color: Colors.black45),
-                              onPressed: () {
-                                _password.clear();
-                              },
-                            ),
-                          ),
-                          obscureText: true,
-                        ),
-                      ),
-                    ]),
+          title: Text(_loginState == 0 ? '极速登录' : '极速注册'),
+          centerTitle: true,
+          leading: IconButton(
+              icon: Icon(Icons.headset_mic),
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.cs);
+              }),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () {
+                  setState(() {
+                    _loginState = _loginState == 1 ? 0 : 1;
+                  });
+                },
+                child: Text(
+                  _loginState == 0 ? '极速注册' : '极速登陆',
+                  style: TextStyle(color: Colors.white),
+                ))
+          ]),
+      body: Builder(builder: (context) {
+//        final progress = ProgressHUD.of(context);
+        return InkWell(
+          child: Column(
+            children: [
+              Container(
+                margin: WStyle.symmetric(v: 30),
+                alignment: Alignment.center,
+                child: Image.asset('images/icon.jpg', width: 80, height: 80,),
               ),
               Container(
-                width: 340.0,
-                child: Card(
-                  color: Colors.blue,
-                  elevation: 16.0,
-                  child: FlatButton(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        _loginState == 0 ? '极速登陆' : '极速注册',
-                        style: TextStyle(color: Colors.white, fontSize: 16.0),
-                      ),
-                    ),
-                    onPressed: () {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      var _validation1 = _checkPhone();
-                      var _validation2 = _checkPwd();
-                      if (_validation1 && _validation2) {
-                        final request = _loginState == 0
-                            ? WebServices.login(
-                                _phone.text.trim(),
-                                _password.text.trim(),
-                              ).then((value) {
-                                _loginSuccess(value);
-                              }).catchError((e) {
-                                _showError("$e");
-                              })
-                            : WebServices.register(
-                                _phone.text.trim(),
-                                _password.text.trim(),
-                              ).then((value) {
-                                _loginSuccess(value);
-                              }).catchError((e) {
-                                _showError("$e");
+                child: _loginState == 0
+                    ? Login(
+                    callback: (String mobile, String password, String inviter) {
+                      _showDialog(
+                          context: context,
+                          callback: () {
+                            LoginServices.loginT(mobile, password,
+                                callback2: (int code, dynamic data) {
+                                  if (code == 201) {
+                                    SManager.login(context, data);
+                                  } else {
+                                    alertDialog(context, content: data.toString());
+                                  }
+                                });
+                          });
+                    })
+                    : Register(
+                  callback: (String mobile, String password, String inviter) {
+                    _showDialog(
+                        context: context,
+                        callback: () {
+//                      progress.show();
+                          LoginServices.registerT(mobile, password, inviter,
+                              callback2: (int code, dynamic data) {
+//                            progress.dismiss();
+                                if (code == 201) {
+                                  SManager.login(context, data);
+                                } else {
+                                  alertDialog(context, content: data.toString());
+                                }
                               });
-                      } else {
-                        if (!_validation1) {
-                          _checkStr = '请输入11位手机号！';
-                        } else if (!_validation2) {
-                          _checkStr = '请输入6-10位密码！';
-                        }
-
-                        alertDialog(context, content: _checkStr);
-                      }
-                    },
-                  ),
+                        });
+                  },
                 ),
               ),
             ],
           ),
-        ],
-      ),
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+        );
+      }),
     );
   }
 
-  _loginSuccess(Response value) {
-    print(value);
-    UserInfo userInfo = UserInfo.fromJson(value.data);
-    Global.userInfo = userInfo;
-    Global.saveProfile();
-    NServices.updateAuthorization(userInfo.token);
-    Navigator.of(context).pushReplacementNamed(Routes.tab);
+  _showDialog({BuildContext context, VoidCallback callback}) {
+    _random = Tools.randomString();
+    _randomController.clear();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Center(
+            child: Text('提示'),
+          ),
+          content: SizedBox(
+            height: 120,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                    width: 80,
+                    child: LoginWidget.validateWidget(
+                        _randomController, Tools.randomLength)),
+                SizedBox(
+                    width: 80,
+                    child: Center(
+                      child:
+                          Text('$_random', style: TextStyle(color: Colors.red)),
+                    ))
+              ],
+            ),
+          ),
+          actions: [
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('取消'),
+            ),
+            FlatButton(
+              child: Text('确定'),
+              onPressed: () {
+                String random = _randomController.text;
+                if (random.toLowerCase().compareTo(_random.toLowerCase()) ==
+                    0) {
+                  Navigator.of(context).pop();
+                  callback();
+                } else {
+                  Navigator.of(context).pop();
+                  alertDialog(context, content: '请输入正确的验证码');
+                }
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
-  _showError(String content) {
-    alertDialog(context, content: content);
+  @override
+  void dispose() {
+    _randomController.dispose();
+    super.dispose();
   }
 }
