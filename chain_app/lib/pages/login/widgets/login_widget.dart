@@ -6,7 +6,8 @@ typedef LoginCallback = void Function(
     String mobile, String password, String inviter);
 
 class LoginWidget {
-  static Widget mobileWidget(TextEditingController textEditingController) {
+  static Widget mobileWidget(TextEditingController textEditingController,
+      {FocusNode node, bool autoFocus = false}) {
     return TextField(
       controller: textEditingController,
       decoration: InputDecoration(
@@ -18,21 +19,25 @@ class LoginWidget {
         WhitelistingTextInputFormatter.digitsOnly,
       ],
       keyboardType: TextInputType.phone,
+      autofocus: autoFocus,
     );
   }
 
-  static Widget passwordWidget(TextEditingController textEditingController) {
+  static Widget passwordWidget(TextEditingController textEditingController,
+      {FocusNode node, bool autoFocus = false, String hintText = '密码'}) {
     return TextField(
       controller: textEditingController,
       decoration: InputDecoration(
-        hintText: '密码',
+        hintText: hintText,
       ),
+      focusNode: node,
       inputFormatters: [
         LengthLimitingTextInputFormatter(16),
       ],
       obscureText: true,
       keyboardType: TextInputType.text,
       enableInteractiveSelection: false,
+      autofocus: autoFocus,
     );
   }
 

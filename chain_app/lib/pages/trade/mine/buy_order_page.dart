@@ -60,7 +60,6 @@ class _BuyOrderPageState extends State<BuyOrderPage>
     int size = 10;
     return [0, 1, 2].asMap().keys.map((e) {
       return InfiniteListView<BuyOrder>(
-          pageSize: size,
           onRetrieveData: (page, items, refresh) {
             return TradeService.buyOrdered(e, p: page, s: size).then((value) {
               if (refresh) {

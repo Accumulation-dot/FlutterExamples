@@ -46,7 +46,6 @@ class _SellPageState extends State<SellPage>
     int size = 10;
     return [0, 1, 2, 3].asMap().keys.map((e) {
       return InfiniteListView<SellItem>(
-          pageSize: size,
           onRetrieveData: (page, items, refresh) {
             return TradeService.sellMine(stus: e, p: page, s: size)
                 .then((value) {

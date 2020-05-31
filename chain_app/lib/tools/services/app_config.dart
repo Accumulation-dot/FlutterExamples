@@ -1,4 +1,3 @@
-
 final username = "username";
 
 final password = "password";
@@ -28,7 +27,7 @@ typedef ResponseCallback = void Function(int code, dynamic data, dynamic error);
 typedef ResponseCallback2 = void Function(int code, dynamic data);
 
 class AppConfig {
-//    static const baseUrl = 'http://192.168.1.106:8000/';
+//  static const baseUrl = 'http://192.168.1.106:8000/';
   static const baseUrl = 'http://3.130.229.248:8000/';
 
   static const token = 'access_token';
@@ -44,8 +43,6 @@ class AppConfig {
   static AppConfig _instance;
 
   String _baseUrl;
-
-
 
   AppConfig._internal() {
     final isProd = bool.fromEnvironment('dart.vm.product');
@@ -63,5 +60,4 @@ class AppConfig {
     }
     return _instance;
   }
-
 }

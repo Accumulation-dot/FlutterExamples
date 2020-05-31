@@ -15,6 +15,8 @@ class NServices {
 
   static NServices _instance;
 
+  static const s = 25;
+
   NServices._internal() {
     if (_dio == null) {
       _dio = Dio(

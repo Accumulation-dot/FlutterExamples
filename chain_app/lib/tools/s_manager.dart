@@ -9,10 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SManager {
-  static void logout(BuildContext context) {
+  static void logout(BuildContext context, {String message = '用户信息过期, 请重新登陆'}) {
     if (Global.logoutSuccess()) {
       NServices.logout();
-      showMessage('用户信息过期, 请重新登陆');
+      showMessage(message);
       Navigator.of(context)
           .pushNamedAndRemoveUntil(Routes.welcome, (route) => false);
     }
@@ -33,7 +33,6 @@ class SManager {
   static void dioErrorHandle(BuildContext context, DioError error,
       {bool alert = false}) {
     DEInfo info = DEInfo.info(error);
-    print(context);
     if (info.code == 401) {
       logout(context);
     } else {

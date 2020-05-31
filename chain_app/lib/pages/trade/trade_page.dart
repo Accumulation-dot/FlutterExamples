@@ -149,7 +149,6 @@ class _TradeBuyPageState extends State<TradeBuyPage> {
             )
           : null,
       body: InfiniteListView<BuyItem>(
-        pageSize: pageSize,
         loadingBuilder: (context) {
           return InfoWidget.loadingWidget();
         },
@@ -269,7 +268,6 @@ class _TradeSellPageState extends State<TradeSellPage> {
             )
           : null,
       body: InfiniteListView<SellItem>(
-        pageSize: pageSize,
         loadingBuilder: (context) {
           return InfoWidget.loadingWidget();
         },

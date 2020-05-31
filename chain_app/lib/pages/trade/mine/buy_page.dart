@@ -55,7 +55,6 @@ class _BuyPageState extends State<BuyPage> with SingleTickerProviderStateMixin {
     int size = 10;
     return [0, 1, 2, 3].asMap().keys.map((e) {
       return InfiniteListView<BuyItem>(
-          pageSize: size,
           onRetrieveData: (page, items, refresh) {
             return TradeService.buyMine(stus: e, p: page, s: size)
                 .then((value) {

@@ -1,21 +1,15 @@
-import 'dart:math';
-
-import 'package:chain_app/models/user_info.dart';
 import 'package:chain_app/pages/login/login.dart';
 import 'package:chain_app/pages/login/register.dart';
 import 'package:chain_app/pages/login/widgets/login_widget.dart';
+import 'package:chain_app/pages/user/modify_pd_page.dart';
 import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
-import 'package:chain_app/tools/global.dart';
 import 'package:chain_app/tools/routes.dart';
 import 'package:chain_app/tools/s_manager.dart';
-import 'package:chain_app/tools/services/services.dart';
 import 'package:chain_app/tools/services/login_services.dart';
 import 'package:chain_app/tools/tools.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -50,6 +44,18 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text(
                   _loginState == 0 ? '极速注册' : '极速登陆',
                   style: TextStyle(color: Colors.white),
+                )),
+            FlatButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return ModifyPDPage();
+                    },
+                  ));
+                },
+                child: Text(
+                  '找回密码',
+                  style: TextStyle(color: Colors.white),
                 ))
           ]),
       body: Builder(builder: (context) {
@@ -60,44 +66,52 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 margin: WStyle.symmetric(v: 30),
                 alignment: Alignment.center,
-                child: Image.asset('images/icon.jpg', width: 80, height: 80,),
+                child: Image.asset(
+                  'images/icon.jpg',
+                  width: 80,
+                  height: 80,
+                ),
               ),
               Container(
                 child: _loginState == 0
-                    ? Login(
-                    callback: (String mobile, String password, String inviter) {
-                      _showDialog(
-                          context: context,
-                          callback: () {
-                            LoginServices.loginT(mobile, password,
-                                callback2: (int code, dynamic data) {
-                                  if (code == 201) {
-                                    SManager.login(context, data);
-                                  } else {
-                                    alertDialog(context, content: data.toString());
-                                  }
-                                });
-                          });
-                    })
-                    : Register(
-                  callback: (String mobile, String password, String inviter) {
-                    _showDialog(
-                        context: context,
-                        callback: () {
-//                      progress.show();
-                          LoginServices.registerT(mobile, password, inviter,
-                              callback2: (int code, dynamic data) {
-//                            progress.dismiss();
+                    ? Login(callback:
+                        (String mobile, String password, String inviter) {
+                        _showDialog(
+                            context: context,
+                            callback: () {
+                              LoginServices.loginT(mobile, password,
+                                  callback2: (int code, dynamic data) {
                                 if (code == 201) {
                                   SManager.login(context, data);
                                 } else {
-                                  alertDialog(context, content: data.toString());
+                                  alertDialog(context,
+                                      content: data.toString());
                                 }
                               });
-                        });
-                  },
-                ),
-              ),
+                            });
+                      })
+                    : Register(
+                        callback:
+                            (String mobile, String password, String inviter) {
+                          _showDialog(
+                              context: context,
+                              callback: () {
+//                      progress.show();
+                                LoginServices.registerT(
+                                    mobile, password, inviter,
+                                    callback2: (int code, dynamic data) {
+//                            progress.dismiss();
+                                  if (code == 201) {
+                                    SManager.login(context, data);
+                                  } else {
+                                    alertDialog(context,
+                                        content: data.toString());
+                                  }
+                                });
+                              });
+                        },
+                      ),
+              )
             ],
           ),
           onTap: () {

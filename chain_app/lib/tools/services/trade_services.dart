@@ -1,10 +1,7 @@
 import 'dart:io';
 
-import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/services/services.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'app_config.dart';
 
@@ -96,7 +93,7 @@ class TradeService {
   }
 
   /// 获取我的预定: 出售订单
-  static Future<Response> sellOrdered(int ss, {int p = 1, int s = 30}) async {
+  static Future<Response> sellOrdered(int ss, {int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',
@@ -114,7 +111,7 @@ class TradeService {
   }
 
   /// 获取我的预定: 求购订单
-  static Future<Response> buyOrdered(int ss, {int p = 1, int s = 30}) async {
+  static Future<Response> buyOrdered(int ss, {int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',
@@ -128,7 +125,7 @@ class TradeService {
   /// 收购信息 其他人的收购信息
   static Future<Response> tradeBuy({
     int p = 1,
-    int s = 30,
+    int s = NServices.s,
   }) async {
     var parameter = {
       page: '$p',
@@ -141,7 +138,7 @@ class TradeService {
   }
 
   /// 出售信息信息 其他人的出售信息
-  static Future<Response> tradeSell({int p = 1, int s = 30}) async {
+  static Future<Response> tradeSell({int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',
@@ -153,7 +150,7 @@ class TradeService {
   }
 
   /// 我的求购信息
-  static Future<Response> buyMine({int stus, int p = 1, int s = 30}) async {
+  static Future<Response> buyMine({int stus, int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',
@@ -168,7 +165,7 @@ class TradeService {
   }
 
   /// 我的出售信息
-  static Future<Response> sellMine({int stus, int p = 1, int s = 30}) async {
+  static Future<Response> sellMine({int stus, int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',
@@ -183,7 +180,7 @@ class TradeService {
   }
 
   static Future<Response> tradeMine(String uri,
-      {int ss, int p = 1, int s = 30}) async {
+      {int ss, int p = 1, int s = NServices.s}) async {
     var parameter = {
       page: '$p',
       size: '$s',

@@ -21,7 +21,7 @@ class NewsServices {
   static const _advert_up = 'advert/up.json';
 
   /// 获取新闻列表
-  static Future<Response> newsList({int p = 1, int s = 30}) async {
+  static Future<Response> newsList({int p = 1, int s = NServices.s}) async {
     return NServices.get(_news_list, parameter: {page: p, size: s});
   }
 
@@ -50,7 +50,7 @@ class NewsServices {
     return NServices.postForm(_advert_add, parameter: formData);
   }
 
-  static Future<Response> advertMine({int p = 1, int s = 30}) {
+  static Future<Response> advertMine({int p = 1, int s = NServices.s}) {
     return NServices.get(_advert_mine, parameter: {page: '$p', size: '$s'});
   }
 

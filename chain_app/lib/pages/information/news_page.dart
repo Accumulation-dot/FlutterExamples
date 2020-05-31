@@ -1,12 +1,8 @@
 import 'package:chain_app/models/news_list.dart';
 import 'package:chain_app/pages/information/news_detail_page.dart';
 import 'package:chain_app/pages/information/widgets/info_widget.dart';
-import 'package:chain_app/tools/de_info.dart';
-import 'package:chain_app/tools/routes.dart';
 import 'package:chain_app/tools/s_manager.dart';
-import 'package:chain_app/tools/services/app_config.dart';
 import 'package:chain_app/tools/services/news_services.dart';
-import 'package:chain_app/tools/webservices.dart';
 import 'package:flukit/flukit.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +24,7 @@ class _NewsPageState extends State<NewsPage> {
           return InfoWidget.noMoreWidget(text: '总数: ${list.length}, 没有更多数据');
         },
         onRetrieveData: (page, items, refresh) {
-          return NewsServices.newsList(p: page).then((value) {
+          return NewsServices.newsList(p: page,).then((value) {
             if (refresh) {
               items.clear();
             }

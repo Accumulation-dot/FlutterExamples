@@ -58,7 +58,6 @@ class _SellOrderPageState extends State<SellOrderPage>
     int size = 10;
     return [0, 1, 2].asMap().keys.map((e) {
       return InfiniteListView<SellOrder>(
-          pageSize: size,
           onRetrieveData: (page, items, refresh) {
             return TradeService.sellOrdered(e, p: page, s: size).then((value) {
               if (refresh) {

@@ -1,4 +1,5 @@
 import 'package:chain_app/models/app_version.dart';
+import 'package:chain_app/pages/user/modify_pd_page.dart';
 import 'package:chain_app/style/w_style.dart';
 import 'package:chain_app/tools/alert_dialog.dart';
 import 'package:chain_app/tools/global.dart';
@@ -41,15 +42,22 @@ class _SettingPageState extends State<SettingPage> {
       ),
       body: ListView(
         children: <Widget>[
-//          ListTile(
-//            title: Text('修改密码'),
-//          ),
-//          Divider(),
-
           ListTile(
             title: Text('当前版本: v${_version}'),
             trailing: _trailing(),
           ),
+          ListTile(
+            title: Text('修改密码'),
+            trailing: Icon(Icons.keyboard_arrow_right),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return ModifyPDPage(
+                  modifyEnum: ModifyEnum.change,
+                );
+              }));
+            },
+          ),
+          Divider(),
           Center(
             child: RaisedButton(
                 color: Colors.green,
@@ -71,7 +79,6 @@ class _SettingPageState extends State<SettingPage> {
                   ]);
                 }),
           ),
-          Divider(),
         ],
       ),
     );
@@ -126,7 +133,10 @@ class _SettingPageState extends State<SettingPage> {
           onPressed: () {
             _request();
           },
-          child: Text('检查更新', style: TextStyle(color: Colors.white),),
+          child: Text(
+            '检查更新',
+            style: TextStyle(color: Colors.white),
+          ),
           color: Colors.orange,
           shape: WStyle.roundedBorder20,
         );
@@ -155,7 +165,7 @@ class _SettingPageState extends State<SettingPage> {
           .execute(download,
               destinationFilename: 'sd-${_versionNew.version}.apk')
           .listen((event) {
-            print(event.value);
+        print(event.value);
       });
     } catch (e) {
       alertDialog(context, content: e.toString());
